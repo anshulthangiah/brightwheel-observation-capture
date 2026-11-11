@@ -1,0 +1,31 @@
+/* Take a Tour: spotlight, welcome and wrap-up cards, progress dots. Keep identical across projects. */
+html.tour-lock, html.tour-lock body { overflow:hidden; }
+#tour-dim { position:fixed; inset:0; background:var(--g-dim); z-index:40; }
+#tour-dim.clear { background:transparent; }
+#tour-ring { position:fixed; z-index:41; border-radius:12px; box-shadow:0 0 0 4px var(--g-spot), 0 0 0 9999px var(--g-dim); pointer-events:none; transition:left .2s, top .2s, width .2s, height .2s; }
+body.tour-open { padding-right:calc(var(--g-dock) + 24px); }
+
+.tkicker { font-size:12px; color:var(--g-accent); font-weight:700; text-transform:uppercase; letter-spacing:.04em; }
+.tnote { font-size:12.5px; color:var(--g-muted); border-top:1px solid var(--g-line); padding-top:8px; margin-top:10px; }
+.tdots { display:flex; gap:6px; margin:4px 0 8px; }
+.tdots i { width:8px; height:8px; border-radius:50%; background:#d9dde8; }
+.tdots i.done { background:#9fb0ff; } .tdots i.on { background:var(--g-accent); transform:scale(1.25); }
+.tclose { padding-left:18px; margin:8px 0; font-size:13.5px; } .tclose li { margin:6px 0; }
+
+/* wrap-up: two clear next actions, then the first 90 days as a short list */
+.ctas { display:flex; flex-direction:column; gap:8px; margin-top:14px; }
+.cta { display:flex; flex-direction:column; align-items:flex-start; gap:2px; text-align:left; width:100%; min-height:56px; padding:10px 14px; border-radius:10px; border:1px solid var(--g-line); background:#fff; cursor:pointer; font:inherit; color:var(--g-ink); }
+.cta.primary { background:var(--g-accent); color:#fff; border-color:var(--g-accent); }
+.cta .ctat { font-size:15px; font-weight:700; }
+.cta .ctad { font-size:13px; opacity:.85; }
+.tlinks { display:flex; justify-content:space-between; margin-top:8px; }
+button.link { background:none; border:0; color:var(--g-accent); text-decoration:underline; cursor:pointer; font-size:13px; min-height:36px; padding:0 4px; }
+.tnote.plan { color:var(--g-ink); }
+.ptitle { display:block; font-size:13px; margin-bottom:2px; }
+.planlist { margin:4px 0 0; }
+.planlist > div { display:grid; grid-template-columns:84px 1fr; gap:8px; padding:3px 0; border-top:1px dashed var(--g-line); }
+.planlist > div:first-child { border-top:0; }
+.planlist dt { font-weight:700; font-size:13px; }
+.planlist dd { margin:0; font-size:13px; }
+
+@media (prefers-reduced-motion: reduce) { #tour-ring { transition:none; } }

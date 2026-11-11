@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Observation Capture: concept demo</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="guide.css">
+<link rel="stylesheet" href="tour.css">
+<link rel="stylesheet" href="builder.css">
+</head>
+<body>
+<div class="notice" role="note"><b>Simulated concept.</b> No AI model runs. Every child, photo, voice and school figure is synthetic. Built from public information only. Not affiliated with brightwheel.</div>
+<header>
+  <div class="appbar">
+    <h1>Observation Capture</h1>
+    <div id="guide-controls" class="guide-controls"></div>
+  </div>
+  <div class="tabrow">
+    <nav class="topnav" aria-label="Main">
+      <button data-tab="teacher" class="active">Teacher</button>
+      <button data-tab="district">District</button>
+    </nav>
+    <div id="coverage-chip" class="chip-progress" aria-live="polite"></div>
+  </div>
+</header>
+
+<div id="banner" class="banner" role="alert" hidden></div>
+
+<main>
+  <section id="view-teacher">
+    <nav class="subnav" aria-label="Teacher">
+      <button data-tab="capture" class="active">Capture</button>
+      <button data-tab="review">Review <span id="badge" class="badge">0</span></button>
+      <button data-tab="metrics">Your numbers</button>
+    </nav>
+  <section id="tab-capture">
+    <div id="prompt" class="prompt" hidden></div>
+    <div class="grid">
+      <div class="panel">
+        <h2>This morning (synthetic)</h2>
+        <p class="hint">Pick a moment to play it out, as if you were in the room.</p>
+        <ul id="capture-list"></ul>
+      </div>
+      <div class="panel" id="capture-detail">
+        <h2>Capture</h2>
+        <div id="stage" aria-live="polite"></div>
+        <label>Who is it about? <span class="hint">Picked from your voice note. Tap to change.</span></label>
+        <div id="chips" class="chips"></div>
+        <div id="conflict" class="conflict" role="alertdialog" aria-live="assertive" hidden></div>
+        <button id="make-draft" class="primary big" disabled>Save draft</button>
+        <p class="feedforward">Saves to your review list. Nothing is shared with families until you approve it.</p>
+        <p id="capture-msg" class="hint" aria-live="polite"></p>
+        <div id="draft-preview"></div>
+      </div>
+    </div>
+    <div class="panel reminder">
+      <label for="remind">Remind me to review at</label>
+      <select id="remind">
+        <option>12:30 PM (nap time)</option>
+        <option>3:30 PM (after pickup starts)</option>
+        <option>5:15 PM (before I leave)</option>
+      </select>
+      <button id="preview-remind" class="ghost">Preview the reminder</button>
+      <div id="notif" class="notif" hidden></div>
+    </div>
+  </section>
+
+  <section id="tab-review" hidden>
+    <div class="panel">
+      <h2>End-of-day review</h2>
+      <div id="progress" class="progress-wrap"></div>
+      <div id="queue"></div>
+    </div>
+    <div class="panel">
+      <h2>Approved today</h2>
+      <div id="records"></div>
+    </div>
+  </section>
+
+  <section id="tab-metrics" hidden>
+    <div class="panel">
+      <h2>Your numbers today</h2>
+      <p class="hint">Only you see these. In a real product they would not be used to rate teachers.</p>
+      <div id="metrics" class="cards"></div>
+      <p class="hint">They show the metric definitions from the spec. They are not results from real classrooms, and the seconds include the simulated waiting.</p>
+    </div>
+  </section>
+  </section>
+
+  <section id="view-district" hidden>
+    <div class="panel">
+      <h2>District: evidence quality across sites</h2>
+      <p class="hint">Concept for a county, district or state sponsor. It shows how much evidence exists and how consistently it is recorded, not child outcomes, because results only mean something once the evidence is consistent. All numbers are made up.</p>
+      <div id="district"></div>
+      <div class="row"><button id="export-csv" class="primary">Export CSV</button><span class="hint">A spreadsheet export, so a state can combine it with its own data.</span></div>
+      <pre id="csv-preview" class="csv" hidden></pre>
+    </div>
+  </section>
+</main>
+
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+<footer>Rules from the spec: drafts only (R1), High needs two evidence items and a photo can be one of them (R2), abstain when unsure (R3), at most two skills (R4), safety notes are not mapped and stay Staff-only (R5), the evidence is always shown (R6). Skill names and codes are from the published Experience Developmental Continuum of Skills (c) Experience Early Learning Co., names only, used for reference with attribution; benchmark descriptors are not reproduced. The matching rules are mine. The AI steps are a scripted simulation.</footer>
+
+<script src="framework.js"></script>
+<script src="matcher.js"></script>
+<script src="ux.js"></script>
+<script src="trust.js"></script>
+<script src="data.js"></script>
+<script src="guide-content.js"></script>
+<script src="app.js"></script>
+<script src="guide-common.js"></script>
+<script src="tour.js"></script>
+<script src="builder.js"></script>
+</body>
+</html>

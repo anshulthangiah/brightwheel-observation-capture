@@ -1,0 +1,18 @@
+{
+  "name": "observation-capture-demo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Concept demo: observations a teacher can trust and a state can see. Scripted simulation, synthetic data, offline, no API key.",
+  "scripts": {
+    "test": "node --test",
+    "media": "node make-media.js",
+    "start": "python3 -m http.server 8765",
+    "test:browser": "node tests-ui/browser.js",
+    "test:tour": "node tests-ui/tour.js",
+    "test:guide": "node tests-ui/guide-kit.e2e.js ."
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "playwright": "^1.50.0"
+  }
+}

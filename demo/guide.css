@@ -1,0 +1,69 @@
+/*
+ * Product Builder guide kit: shared look. Used by Take a Tour and Builder mode. Keep this identical across projects.
+ * It reads the host app's colours when they exist (--accent, --ink, --muted, --line, --ok) and falls back to the signature palette.
+ */
+:root {
+  --g-accent: var(--accent, #4457d9);
+  --g-ink: var(--ink, #1f2430);
+  --g-muted: var(--muted, #667085);
+  --g-line: var(--line, #e4e7ee);
+  --g-ok: var(--ok, #1f9d6a);
+  --g-builder: #ff6a3d;        /* Builder mode orange: switch, numbers, outlines */
+  --g-builder-ink: #c2410c;
+  --g-dark: #1f2430;           /* legend and caption background */
+  --g-spot: #ffd24a;           /* tour spotlight ring */
+  --g-dim: rgba(20, 24, 40, .55);
+  --g-dock: 380px;
+}
+
+/* the kit must not depend on the host app for this: an element with the hidden attribute is never shown */
+#tour-root [hidden], #builder-root [hidden], #builder-legend[hidden], .dock[hidden] { display:none !important; }
+
+/* ---- controls (Take the tour, Builder mode switch) ---- */
+.guide-controls { display:flex; align-items:center; gap:10px; }
+.guide-controls.floating { position:fixed; top:10px; right:10px; z-index:20; background:#fff; padding:6px 8px; border-radius:14px; box-shadow:0 2px 10px rgba(0,0,0,.15); }
+.guide-controls button.ghost { min-height:40px; background:#fff; border:1px solid var(--g-line); padding:7px 12px; border-radius:8px; cursor:pointer; font:inherit; font-size:13px; color:var(--g-ink); }
+
+/* ---- the dock: one fixed place and one top-to-bottom order for every card ---- */
+.dock { position:fixed; z-index:50; background:#fff; color:var(--g-ink); box-shadow:0 12px 40px rgba(0,0,0,.35); outline:none; display:flex; flex-direction:column; font:14px/1.45 -apple-system, "Segoe UI", Roboto, sans-serif; }
+.dock:not(.center) { top:12px; right:12px; bottom:12px; width:var(--g-dock); border-radius:14px; padding:16px 18px 12px; }
+.dock.center { left:50%; top:50%; transform:translate(-50%,-50%); border-radius:14px; padding:18px 20px; max-height:calc(100vh - 24px); overflow:auto; }
+.dock h2 { font-size:17px; margin:4px 0 6px; line-height:1.3; }
+.dock p { margin:6px 0; font-size:14px; }
+.dock button { min-height:44px; font:inherit; }
+.dock button.primary { background:var(--g-accent); color:#fff; border:0; padding:9px 16px; border-radius:8px; cursor:pointer; font-size:14px; }
+.dock button.ghost { background:#fff; border:1px solid var(--g-line); padding:7px 12px; border-radius:8px; cursor:pointer; font-size:13px; color:var(--g-ink); }
+.dock button:focus-visible, .guide-controls button:focus-visible, .bswitch:focus-visible, .bmark:focus-visible, .lgbtn:focus-visible { outline:3px solid #8da2ff; outline-offset:2px; }
+.tscroll { flex:1; overflow:auto; min-height:0; }
+.tfoot { border-top:1px solid var(--g-line); padding-top:8px; margin-top:8px; }
+.thead { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.dock .thead { flex-wrap:nowrap; gap:10px; }
+.thead .x { margin-left:auto; border:0; background:none; font-size:24px; cursor:pointer; min-height:36px; min-width:36px; padding:0 6px; color:var(--g-muted); }
+.tstep { font-size:12px; font-weight:700; color:var(--g-accent); }
+.srcrow { margin:6px 0 2px; }
+.srcchip { font-size:11px; padding:2px 8px; border-radius:10px; font-weight:600; }
+.src-page { background:#e3f6ec; color:var(--g-ok); }
+.src-bot { background:#fff2d9; color:#9a6a00; }
+.src-both { background:#eef0ff; color:var(--g-accent); }
+
+/* the four rows, always in this order */
+.trows { margin:4px 0; }
+.trows dt { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.04em; color:var(--g-muted); margin-top:12px; }
+.trows dd { margin:3px 0 0; font-size:14px; line-height:1.5; }
+.tbtns { display:flex; gap:8px; justify-content:flex-end; margin-top:6px; flex-wrap:wrap; }
+.tfoot .tbtns button { flex:1; }
+
+/* ---- the guide character ---- */
+.mascot { display:block; flex:none; object-fit:contain; }
+.mintro { display:flex; align-items:center; gap:12px; margin-bottom:12px; }
+.mintro + .tkicker { margin-top:2px; }
+.mwho { display:flex; flex-direction:column; line-height:1.25; min-width:0; }
+.mwho b { font-size:14px; }
+.mwho span { font-size:12.5px; color:var(--g-muted); }
+.mwho .tstep { display:block; }
+
+/* phone and small tablet: the dock becomes a bottom sheet and the page makes room above it */
+@media (max-width:900px) {
+  .dock:not(.center) { top:auto; left:8px; right:8px; bottom:8px; width:auto; max-height:52vh; }
+  body.tour-open, body.builder-docked { padding-right:0; padding-bottom:54vh; }
+}

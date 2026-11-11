@@ -1,0 +1,7 @@
+.DS_Store
+node_modules/
+*.aiff
+
+# Local-only files, never published
+docs/UX_PRINCIPLES.md
+docs/GITHUB_PUSH_GUIDE.md
