@@ -4,7 +4,7 @@
 
 Voice drafting already makes early-learning observations quick to write. This concept covers what comes next: each suggestion is explained and checkable at the moment of capture, teachers are steered to the children and skills still missing, and the evidence rolls up into something a district or state sponsor can see and export.
 
-**[Try the live demo](https://anshulthangiah.github.io/observation-capture/)** (opens a short guided tour)
+**[Try the live demo](https://anshulthangiah.github.io/brightwheel-observation-capture/)** (opens a short guided tour)
 
 This is an independent portfolio project (product spec plus a working demo). It is not affiliated with brightwheel and was built without access to any brightwheel system. Product facts come from public pages and brightwheel's own support chatbot.
 
