@@ -41,7 +41,7 @@
   };
 
   // ---- the four rows every card has, always in this order. This is part of the signature look.
-  G.ROWS = [["today", "Today"], ["built", "What I built"], ["why", "Why it should work"], ["measure", "How I would measure it"]];
+  G.ROWS = [["scenario", "Current scenario"], ["built", "What I built"], ["why", "Why it should work"], ["measure", "How I would measure it"]];
   G.rows = (s) => `<dl class="trows">${G.ROWS.map(([k, label]) => `<div><dt>${label}</dt><dd>${G.esc(s[k])}</dd></div>`).join("")}</dl>`;
 
   // ---- the guide character

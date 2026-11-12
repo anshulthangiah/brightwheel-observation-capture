@@ -10,7 +10,7 @@
 .bswitch.on .bsw-knob { left:21px; }
 .bswitch.on .bsw-state { color:var(--g-builder-ink); }
 
-body.builder-docked { padding-right:calc(var(--g-dock) + 24px); }
+@media (min-width:901px) { body.builder-docked { padding-right:calc(var(--g-dock) + 24px); } }   /* phones use the bottom sheet rule in guide.css */
 #builder-markers { position:fixed; inset:0; pointer-events:none; z-index:30; }
 .bmark { position:fixed; pointer-events:auto; width:28px; height:28px; min-height:28px; border-radius:50%; border:2px solid #fff; background:var(--g-builder); color:#fff; font-weight:700; font-size:13px; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,.35); padding:0; animation:bpulse 2s ease-out 2; }
 @keyframes bpulse { 0% { box-shadow:0 0 0 0 rgba(255,106,61,.6); } 100% { box-shadow:0 0 0 14px rgba(255,106,61,0); } }

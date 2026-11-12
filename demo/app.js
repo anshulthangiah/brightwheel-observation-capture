@@ -541,10 +541,10 @@
   // ---------- district view (concept, synthetic)
   function renderDistrict() {
     const rows = Trust.districtRows(DATA.sites);
-    $("#district").innerHTML = `<table class="dist"><thead><tr><th>Site</th><th>Type</th><th>Children</th><th>Children observed (30 days)</th><th>Observations per child</th><th>With photo</th><th>Avg. skills assessed (of 73)</th><th>Flags</th></tr></thead><tbody>` +
+    $("#district").innerHTML = `<div class="distwrap"><table class="dist"><thead><tr><th>Site</th><th>Type</th><th>Children</th><th>Children observed (30 days)</th><th>Observations per child</th><th>With photo</th><th>Avg. skills assessed (of 73)</th><th>Flags</th></tr></thead><tbody>` +
       rows.map((r) => `<tr class="${r.flags === "None" ? "" : "warnrow"}"><td><b>${esc(r.site)}</b></td><td>${esc(r.type)}</td><td>${r.children}</td>
         <td><div class="minibar"><div style="width:${r.children_observed_pct}%"></div></div>${r.children_observed_pct}%</td><td>${r.obs_per_child}</td><td>${r.obs_with_photo_pct}%</td><td>${r.avg_skills_assessed_of_73}</td>
-        <td>${r.flags === "None" ? '<span class="chip High">None</span>' : esc(r.flags)}</td></tr>`).join("") + `</tbody></table>`;
+        <td>${r.flags === "None" ? '<span class="chip High">None</span>' : esc(r.flags)}</td></tr>`).join("") + `</tbody></table></div>`;
   }
   $("#export-csv").addEventListener("click", () => {
     const csv = Trust.toCsv(Trust.districtRows(DATA.sites));

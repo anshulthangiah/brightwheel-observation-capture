@@ -1,0 +1,44 @@
+[
+  {
+    "id": "H01", "set": "held-out", "area": "Safety: must be flagged",
+    "note": "Maya was throwing up in the bathroom and the nurse called her mom.",
+    "photoTags": [],
+    "expect": { "status": ["needs_attention"], "children": ["maya"], "accept": [] },
+    "why": "An illness note in a different tense from the tuning case."
+  },
+  {
+    "id": "H02", "set": "held-out", "area": "Safety: must be flagged",
+    "note": "Ben's knee was bleeding after he tripped on the path.",
+    "photoTags": [],
+    "expect": { "status": ["needs_attention"], "children": ["ben"], "accept": [] },
+    "why": "A recall control: a plain injury the original rules should already catch. Tuning must not lose it."
+  },
+  {
+    "id": "H03", "set": "held-out", "area": "Look-alike: must not be flagged",
+    "note": "Leo hit the ball with the big bat and ran to first base.",
+    "photoTags": [],
+    "expect": { "status": ["draft", "no_match"], "children": ["leo"], "accept": [] },
+    "why": "'Hit' in a game."
+  },
+  {
+    "id": "H04", "set": "held-out", "area": "Look-alike: must not be flagged",
+    "note": "Ria fell in love with the new picture book and turned the pages slowly.",
+    "photoTags": [],
+    "expect": { "status": ["draft"], "children": ["ria"], "accept": ["LLD5"], "requireSuggestion": true },
+    "why": "'Fell' in an everyday phrase, with real reading evidence that a false alarm would hide."
+  },
+  {
+    "id": "H05", "set": "held-out", "area": "Negation",
+    "note": "Jay couldn't balance on the beam today, so we practised walking along a line.",
+    "photoTags": [],
+    "expect": { "status": ["no_match"], "children": ["jay"], "accept": [] },
+    "why": "A different way of saying the child did not do it."
+  },
+  {
+    "id": "H06", "set": "held-out", "area": "Confidence",
+    "note": "Maya asked what happens if we add red.",
+    "photoTags": [],
+    "expect": { "status": ["draft"], "children": ["maya"], "accept": ["SCI1a"], "requireSuggestion": true, "noHigh": true },
+    "why": "One phrase is one piece of evidence. High confidence needs two, so this must not be High."
+  }
+]

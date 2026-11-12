@@ -17,7 +17,7 @@ test("steps are numbered 1..N in order, with unique ids and every field the card
   assert.deepStrictEqual(G.STEPS.map((s) => s.n), G.STEPS.map((_, i) => i + 1));
   assert.strictEqual(new Set(G.STEPS.map((s) => s.id)).size, G.STEPS.length);
   G.STEPS.forEach((s) => {
-    ["id", "title", "today", "built", "why", "measure", "target", "pin"].forEach((f) => assert.ok(typeof s[f] === "string" && s[f].length, s.id + " missing " + f));
+    ["id", "title", "scenario", "built", "why", "measure", "target", "pin"].forEach((f) => assert.ok(typeof s[f] === "string" && s[f].length, s.id + " missing " + f));
     assert.ok(G.SOURCES[s.src], s.id + " has an unknown source label");
     assert.ok(s.setup && typeof s.setup.view === "string", s.id + " needs setup.view");
     assert.ok(Array.isArray(s.fallback) && s.fallback.length >= 1, s.id + " needs a fallback anchor so its number always shows");
@@ -27,7 +27,7 @@ test("steps are numbered 1..N in order, with unique ids and every field the card
 test("cards stay short enough to read in a tour", () => {
   G.STEPS.forEach((s) => {
     assert.ok(s.title.length <= 70, s.id + " title too long");
-    ["today", "built", "why", "measure"].forEach((f) => assert.ok(s[f].length <= 400, s.id + "." + f + " is " + s[f].length + " chars"));
+    ["scenario", "built", "why", "measure"].forEach((f) => assert.ok(s[f].length <= 400, s.id + "." + f + " is " + s[f].length + " chars"));
     assert.ok(s.measure.length >= 40, s.id + " measure is too thin");
   });
 });

@@ -6,7 +6,17 @@
  * Interface a real model would sit behind: mapObservation(note, roster, framework, photoTags).
  */
 (function (root) {
-  const SENSITIVE = /\b(bump(ed)?|hit|hitting|bit (him|her|them|me|another|a friend|into)|bite|bitten|biting|injur\w*|hurt|bleed\w*|bruis\w*|fever|vomit\w*|sick|allerg\w*|rash|fell|fall(ing)?|abuse\w*|unsafe|scared of (mom|dad|home)|marks? on (his|her|their)|choking|seizure)\b/i;
+  // R5. Tuned on the eval cases (evals/). Recall matters more than precision here: a missed safeguarding note is worse than a false alarm.
+  //  - "hit/hits/hitting" only counts when it is done to a person or to a body part; "fell/fall" only when someone fell down or off something.
+  const SENSITIVE = new RegExp([
+    "\\b(bump(ed)?|bit (him|her|them|me|another|a friend|into)|bite|bitten|biting|injur\\w*|hurt|bleed\\w*|bruis\\w*|fever|vomit\\w*|sick|allerg\\w*|rash|abuse\\w*|unsafe|scared of (mom|dad|home)|marks? on (his|her|their)|choking|seizure|nurse)\\b",
+    "nose-?bleed\\w*|\\bdiarrh\\w*|\\bthr(ew|ow|owing|ows|own) up\\b|\\bpuk(e|ed|ing)\\b",
+    "\\b(hit|hits|hitting)\\s+(him|her|them|me|us|another|a friend|a child|a classmate)\\b",
+    "\\b(hit|hits|hitting)\\s+(his|her|their|my)\\s+(head|arm|leg|face|knee|nose|mouth|hand|chin|eye)\\b",
+    "\\b(fell|falls|fallen|falling)\\s+(off|down|over|from|out|onto|into|hard|backwards?|forwards?|and)\\b",
+    "\\b(fell|fallen)\\s*([.,!]|$)",
+    "\\b(had|took|has) an? (bad |nasty )?(fall|tumble)\\b"
+  ].join("|"), "i");
 
   function findChildren(note, roster) {
     const found = [];
@@ -16,11 +26,22 @@
     return found;
   }
 
+  // True when the words just before a match say the child did NOT do it. The look-back stops at the start of the sentence or at "but".
+  // "didn't give up" is the opposite: a negated quitting word is positive evidence, so it is not treated as a negation.
+  const NEGATION = /\b(did not|didn'?t|does not|doesn'?t|do not|don'?t|would not|wouldn'?t|could not|couldn'?t|can'?t|cannot|will not|won'?t|refused to|unable to|not able to|never)\b/i;
+  const NEG_POSITIVE = /\b(did not|didn'?t|never|wouldn'?t|couldn'?t)\s+(give up|quit|stop|forget|hesitate)\b/i;
+  function negatedAt(note, index) {
+    const before = note.slice(0, index);
+    const start = Math.max(before.lastIndexOf("."), before.lastIndexOf("!"), before.lastIndexOf("?"), before.lastIndexOf(";"), before.toLowerCase().lastIndexOf(" but "));
+    const clause = before.slice(start + 1).slice(-40);
+    return NEGATION.test(clause) && !NEG_POSITIVE.test(clause);
+  }
+
   function scoreGoal(goal, note) {
     const hits = [];
     for (const cue of goal.cues) {
       const m = note.match(cue.re);
-      if (m) hits.push({ cue: cue.id, phrase: m[0].trim() });
+      if (m && !negatedAt(note, m.index)) hits.push({ cue: cue.id, phrase: m[0].trim() });
     }
     return hits;
   }

@@ -14,7 +14,7 @@ Voice drafting already makes observations quick to write. This concept covers wh
 
 Brightwheel already ships Smart observations: a teacher types or dictates a note and the app drafts the observation, selects the children named, suggests milestones and, with Experience Assessments, benchmarks. The teacher reviews before anything posts. This spec does not propose that feature.
 
-From the public documentation and support answers, the following remain open (confidence in the gaps document):
+From the public documentation and support answers, the following remain open. These are the main themes. The gaps document lists 15 gaps one by one, each with its source and the tour stop that shows it, or marked as not in the demo:
 
 1. Suggestions come with no reason and no confidence.
 2. The photo is added after drafting and plays no part in the suggestion.
@@ -92,8 +92,8 @@ The mapper takes the framework as an input, so a state framework such as DRDP ca
 | Review time | Minutes per day in the review queue | Under 3 |
 | Approval without edit | Approved drafts with no change, High confidence | At least 70% |
 | Wrong-skill rate | Teacher-labelled errors in a 200-note sample, High confidence | Under 10% |
-| Level jumps caught | Flagged jumps, and the share teachers change | To be measured |
-| Children with a recent observation | Share of children with at least one observation per skill domain in the window | Up from baseline |
+| Level jumps caught | Flagged jumps, and the % teachers change | To be measured |
+| Children with a recent observation | % of children with at least one observation in each learning area in the window | Up from baseline |
 | Sponsor evidence | Number of sponsors able to export combined evidence | To be measured |
 
 ## 9. Quality evaluation plan
@@ -103,6 +103,8 @@ The mapper takes the framework as an input, so a state framework such as DRDP ca
 3. Safety set: 100 notes with incident, health and safeguarding language. Required recall near 100%.
 4. Rater consistency: a sample of children rated independently by two teachers on the same skills, to see how often a flag fires and whether it points at real disagreement.
 5. Review failures weekly in the pilot and rewrite cues that cause repeated errors.
+
+**Done so far (a first step, not the plan).** The stand-in keyword rules were scored on 20 tricky notes, 14 used for tuning and 6 held out, before and after tuning. The method, results and the failures that remain are in `evals/README.md`. This tests the rules in the demo, not a model, and 20 notes is far short of the 200 and 100 above.
 
 ## 10. Business case (all numbers are assumptions)
 
@@ -303,7 +305,7 @@ sequenceDiagram
     participant D as District view
 
     P->>D: Open the District tab
-    D-->>P: Three sites with children observed, observations per child, share with a photo, average skills assessed and flags
+    D-->>P: Three sites with children observed, observations per child, % with a photo, average skills assessed and flags
     Note over D: Evidence quality only, not child outcomes. All figures are made up
     P->>D: Look for the site with low coverage
     D-->>P: The flag names the site and the reason
@@ -330,15 +332,15 @@ What it does not prove: real speech, vision or mapping accuracy; that a district
 
 ## 16. Tour and Builder mode
 
-The prototype explains itself so a reader does not need the README. A first-run tour of six stops (one per gap) and a Builder-mode switch that pins numbered markers on the live screens. Both read one content file (`guide-content.js`) and drive the prototype only through a small host adapter, so they never change what it does.
+The prototype explains itself so a reader does not need the README. A first-run tour of six stops (each covers one or more gaps) and a Builder-mode switch that pins numbered markers on the live screens. Both read one content file (`guide-content.js`) and drive the prototype only through a small host adapter, so they never change what it does.
 
 | ID | Requirement |
 |---|---|
-| T1 | Each stop shows four rows: Today, What I built, Why it should work, How I would measure it |
+| T1 | Each stop shows four rows: Current scenario, What I built, Why it should work, How I would measure it |
 | T2 | Every claim about brightwheel carries a source tag: Help center and chatbot, or Screen. Chatbot-only claims are marked unverified |
 | T3 | The card never covers the feature it describes; wide features get a wide card above or below |
 | T4 | The tour can be skipped, replayed, and closed with Escape; it opens once per browser |
-| T5 | Builder mode shows a legend of all six gaps at all times, and "Show me" jumps to the feature |
+| T5 | Builder mode shows a legend of all six stops at all times, and "Show me" jumps to the feature |
 | T6 | The tour restores the visitor's own state when it ends |
 | T7 | The page cannot be scrolled by hand during the tour, so the viewer never loses the highlighted feature |
 | T8 | Every card sits in one fixed place (side panel; bottom sheet on a phone), with the rows in one order |
@@ -346,7 +348,7 @@ The prototype explains itself so a reader does not need the README. A first-run 
 | T10 | The wrap-up offers two actions with a verb and a one-line result: try the prototype, or turn on Builder mode |
 | T11 | Every measure states what is counted and what the number tells you, in plain words |
 | T12 | A guide character, Product Builder Anshul, narrates the tour: image and name in the header of each stop, and on the welcome and wrap-up cards |
-| T13 | The guide also appears in the Builder mode legend, and nowhere else. He never appears inside the Teacher or District screens, the header, or the gap card |
+| T13 | The guide also appears in the Builder mode legend, and nowhere else. He never appears inside the Teacher or District screens, the header, or the stop card |
 | T14 | The mode is named Builder mode in every visible string |
 | T15 | Switching Builder mode on shows all six numbers at once, on every screen. A number sits on its live feature when that is on screen, and otherwise on the panel or tab that leads to it |
 | T16 | A measure only uses terms the screen shows. A big jump is labelled "Jump of N levels. Needs a check." at capture and in review |
