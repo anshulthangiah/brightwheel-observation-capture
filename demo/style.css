@@ -24,7 +24,8 @@ main { max-width:1040px; margin:20px auto; padding:0 16px; }
 audio { width:100%; max-width:420px; margin-bottom:8px; }
 label { display:block; font-size:13px; font-weight:600; margin:8px 0 4px; }
 textarea { width:100%; padding:10px; border:1px solid var(--line); border-radius:8px; font:inherit; }
-.row { display:flex; align-items:center; gap:12px; margin-top:10px; }
+.row { display:flex; align-items:center; gap:12px; margin-top:10px; flex-wrap:wrap; }
+.row select { min-width:0; max-width:100%; }
 button.primary { background:var(--accent); color:#fff; border:0; padding:9px 16px; border-radius:8px; cursor:pointer; font-size:14px; }
 button.ghost { background:#fff; border:1px solid var(--line); padding:7px 12px; border-radius:8px; cursor:pointer; font-size:13px; }
 button.good { background:var(--ok); color:#fff; border:0; padding:7px 12px; border-radius:8px; cursor:pointer; font-size:13px; }
@@ -44,7 +45,7 @@ mark { background:#fff3a8; padding:0 2px; border-radius:3px; }
 .stat { border:1px solid var(--line); border-radius:10px; padding:12px; }
 .stat b { display:block; font-size:22px; }
 .stat span { font-size:12px; color:var(--muted); }
-select { padding:6px; border-radius:6px; border:1px solid var(--line); font:inherit; }
+select { padding:6px; border-radius:6px; border:1px solid var(--line); font:inherit; max-width:100%; }
 footer { max-width:1040px; margin:0 auto 30px; padding:0 16px; color:var(--muted); font-size:12px; }
 .dot { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:4px; }
 
@@ -134,6 +135,7 @@ h3.chk-h { color:#9a6a00; }
 .vis { display:inline-block; font-size:12px; border-radius:10px; padding:1px 8px; margin:4px 0; }
 .vis.fam { background:#eef0ff; color:var(--accent); }
 .vis.staff { background:#fde5e5; color:var(--bad); font-weight:600; }
+.distwrap { overflow-x:auto; -webkit-overflow-scrolling:touch; }
 table.dist { width:100%; border-collapse:collapse; font-size:14px; margin:10px 0; }
 table.dist th, table.dist td { text-align:left; padding:8px; border-bottom:1px solid var(--line); vertical-align:middle; }
 table.dist th { font-size:12px; color:var(--muted); font-weight:600; }
@@ -207,5 +209,5 @@ pre.csv { background:#1f2430; color:#d7e0ff; padding:12px; border-radius:10px; o
 .jumptag { font-size:12px; font-weight:700; color:#8a5a00; background:#fff2d9; border:1px solid #f0c24a; border-radius:10px; padding:1px 8px; white-space:nowrap; }
 
 /* Builder mode outlines the product features it numbers (the product decides which) */
-body.builder-on .goal .why, body.builder-on .levels, body.builder-on .nudge, body.builder-on .visctl, body.builder-on .groupbar, body.builder-on table.dist { outline:2px dashed var(--g-builder, #ff6a3d); outline-offset:3px; }
+body.builder-on .goal .why, body.builder-on .levels, body.builder-on .nudge, body.builder-on .visctl, body.builder-on .groupbar, body.builder-on .distwrap { outline:2px dashed var(--g-builder, #ff6a3d); outline-offset:3px; }
 @media (max-width:900px) { .appbar { padding-top:8px; } }

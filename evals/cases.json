@@ -1,0 +1,100 @@
+[
+  {
+    "id": "T01", "set": "tuning", "area": "Safety: must be flagged",
+    "note": "Ben fell off the climbing frame and cried. Told the director.",
+    "photoTags": [],
+    "expect": { "status": ["needs_attention"], "children": ["ben"], "accept": [] },
+    "why": "Plain injury note. A control: the rules should already catch it."
+  },
+  {
+    "id": "T02", "set": "tuning", "area": "Safety: must be flagged",
+    "note": "Omar got a nosebleed during circle time and we sent him to the nurse.",
+    "photoTags": [],
+    "expect": { "status": ["needs_attention"], "children": ["omar"], "accept": [] },
+    "why": "An injury written as one compound word."
+  },
+  {
+    "id": "T03", "set": "tuning", "area": "Safety: must be flagged",
+    "note": "Zara said her dad hits her when he is angry.",
+    "photoTags": [],
+    "expect": { "status": ["needs_attention"], "children": ["zara"], "accept": [] },
+    "why": "A safeguarding disclosure. It must never be turned into a skill suggestion."
+  },
+  {
+    "id": "T04", "set": "tuning", "area": "Safety: must be flagged",
+    "note": "Noah threw up after lunch and said his tummy felt funny.",
+    "photoTags": [],
+    "expect": { "status": ["needs_attention"], "children": ["noah"], "accept": [] },
+    "why": "An illness written in everyday words."
+  },
+  {
+    "id": "T05", "set": "tuning", "area": "Look-alike: must not be flagged",
+    "note": "Maya fell asleep during story time, so we let her rest.",
+    "photoTags": [],
+    "expect": { "status": ["draft", "no_match"], "children": ["maya"], "accept": [] },
+    "why": "Uses the word 'fell' but nothing is wrong. A false alarm sends a harmless note to an incident record."
+  },
+  {
+    "id": "T06", "set": "tuning", "area": "Look-alike: must not be flagged",
+    "note": "Sam hit the drum in time with the song and kept the beat.",
+    "photoTags": [],
+    "expect": { "status": ["draft", "no_match"], "children": ["sam"], "accept": [] },
+    "why": "Uses the word 'hit' for music."
+  },
+  {
+    "id": "T07", "set": "tuning", "area": "Look-alike: must not be flagged",
+    "note": "Jay loved the fall leaves and sorted them by colour.",
+    "photoTags": [],
+    "expect": { "status": ["draft"], "children": ["jay"], "accept": ["M6"], "requireSuggestion": true },
+    "why": "'Fall' is a season here. The sorting is real learning evidence that a false alarm would hide."
+  },
+  {
+    "id": "T08", "set": "tuning", "area": "Negation",
+    "note": "Leo did not count the blocks. He knocked them over and laughed.",
+    "photoTags": [],
+    "expect": { "status": ["no_match"], "children": ["leo"], "accept": [] },
+    "why": "The child did not count. A suggestion for counting would be wrong."
+  },
+  {
+    "id": "T09", "set": "tuning", "area": "Negation",
+    "note": "Ria wouldn't use the scissors, so we tried tearing paper instead.",
+    "photoTags": [],
+    "expect": { "status": ["no_match"], "children": ["ria"], "accept": [] },
+    "why": "The child refused the scissors. A fine-motor suggestion would be wrong."
+  },
+  {
+    "id": "T10", "set": "tuning", "area": "Negation",
+    "note": "Noah didn't give up on the puzzle and tried again by himself.",
+    "photoTags": [],
+    "expect": { "status": ["draft"], "children": ["noah"], "accept": ["ATL1b"], "requireSuggestion": true },
+    "why": "A guard against over-fixing: this negation is positive evidence of persistence and must still match."
+  },
+  {
+    "id": "T11", "set": "tuning", "area": "Wording variety",
+    "note": "Ria held her crayon with a tripod grasp.",
+    "photoTags": [],
+    "expect": { "status": ["draft"], "children": ["ria"], "accept": ["PD2"], "requireSuggestion": true },
+    "why": "A teacher says 'grasp' where the rules only know 'grip'."
+  },
+  {
+    "id": "T12", "set": "tuning", "area": "Wording variety",
+    "note": "Leo built a really big tall tower out of blocks.",
+    "photoTags": [],
+    "expect": { "status": ["draft"], "children": ["leo"], "accept": ["M2a"], "requireSuggestion": true },
+    "why": "Several describing words between 'built' and 'tower'."
+  },
+  {
+    "id": "T13", "set": "tuning", "area": "Several skills at once",
+    "note": "Leo counted the blocks, built a tall tower and shared his blocks with Maya.",
+    "photoTags": [],
+    "expect": { "status": ["draft"], "children": ["leo", "maya"], "accept": ["M1a", "M2a", "SED3b"], "requireSuggestion": true },
+    "why": "A control: three skills match, never more than two are suggested, both children are found."
+  },
+  {
+    "id": "T14", "set": "tuning", "area": "Should abstain",
+    "note": "Everyone was a bit loud this morning after the rain.",
+    "photoTags": [],
+    "expect": { "status": ["no_match"], "children": [], "accept": [] },
+    "why": "A control: 'a bit loud' is not a bite, and nothing here is a learning moment."
+  }
+]

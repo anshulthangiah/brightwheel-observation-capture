@@ -9,7 +9,7 @@ test("six gap steps in order, each numbered 1 to 6", () => {
 
 test("every step has all the fields the cards need", () => {
   P.STEPS.forEach((s) => {
-    ["title", "today", "built", "why", "measure", "target", "pin"].forEach((f) => assert.ok(typeof s[f] === "string" && s[f].length > 0, s.id + " missing " + f));
+    ["title", "scenario", "built", "why", "measure", "target", "pin"].forEach((f) => assert.ok(typeof s[f] === "string" && s[f].length > 0, s.id + " missing " + f));
     assert.ok(["capture", "review", "district"].includes(s.setup.view), s.id + " bad view");
     assert.ok(P.SOURCES[s.src], s.id + " has an unknown source");
   });
@@ -18,7 +18,7 @@ test("every step has all the fields the cards need", () => {
 test("cards stay short enough to read in a tour", () => {
   P.STEPS.forEach((s) => {
     assert.ok(s.title.length <= 70, s.id + " title too long");
-    ["today", "built", "why", "measure"].forEach((f) => assert.ok(s[f].length <= 400, s.id + "." + f + " is " + s[f].length + " chars"));
+    ["scenario", "built", "why", "measure"].forEach((f) => assert.ok(s[f].length <= 400, s.id + "." + f + " is " + s[f].length + " chars"));
   });
 });
 
@@ -31,7 +31,7 @@ test("every brightwheel claim is labelled with a source, and chatbot sources are
 
 test("the district step says its gap is partly unconfirmed", () => {
   const d = P.STEPS.find((s) => s.id === "district");
-  assert.match(d.today, /partly unconfirmed/);
+  assert.match(d.scenario, /partly unconfirmed/);
 });
 
 test("the welcome and wrap-up state what is simulated and what is not proven", () => {

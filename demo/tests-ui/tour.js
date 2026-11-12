@@ -26,11 +26,11 @@ const shot = (pg, n) => pg.screenshot({ path: "/tmp/oc-" + n + ".png" });
   // ---- walk all six stops
   await pg.locator("#t-next").click();
   const wants = [/Every suggestion says why/, /A benchmark for each child/, /Who is still missing/, /Who sees it is a choice/, /A review teachers will actually finish/, /district or state can see/];
-  const targets = ["#stage .goal .why", "#stage .levels", "#stage .nudge", "#stage .visctl", "#groupbar", "#district table.dist"];
+  const targets = ["#stage .goal .why", "#stage .levels", "#stage .nudge", "#stage .visctl", "#groupbar", "#district .distwrap"];
   for (let i = 0; i < 6; i++) {
     const t = await text("#tour-card");
     ok("stop " + (i + 1) + " title and 'Stop " + (i + 1) + " of 6'", wants[i].test(t) && new RegExp("Stop " + (i + 1) + " of 6").test(t));
-    ok("stop " + (i + 1) + " has Today, What I built, Why it should work, How I would measure it", /today/i.test(t) && /what i built/i.test(t) && /why it should work/i.test(t) && /how i would measure it/i.test(t));
+    ok("stop " + (i + 1) + " has Current scenario, What I built, Why it should work, How I would measure it", /current scenario/i.test(t) && /what i built/i.test(t) && /why it should work/i.test(t) && /how i would measure it/i.test(t));
     ok("stop " + (i + 1) + " shows a source label", (await pg.locator("#tour-card .srcchip").count()) === 1);
     await pg.waitForTimeout(450);
     const ringOk = await vis("#tour-ring");
@@ -44,7 +44,7 @@ const shot = (pg, n) => pg.screenshot({ path: "/tmp/oc-" + n + ".png" });
     ok("stop " + (i + 1) + " card does not cover the spotlight", !overlap);
     ok("stop " + (i + 1) + " shows the guide in the dock header, image loaded and named", (await pg.evaluate(() => { const i = document.querySelector("#tour-card .thead img.mascot"); return !!i && i.naturalWidth > 0; })) && /Product Builder Anshul/.test(await text("#tour-card .thead")));
     const order = await pg.locator("#tour-card dt").allInnerTexts();
-    ok("stop " + (i + 1) + " rows are in the same order, one column", order.map((x) => x.toLowerCase()).join("|") === "today|what i built|why it should work|how i would measure it");
+    ok("stop " + (i + 1) + " rows are in the same order, one column", order.map((x) => x.toLowerCase()).join("|") === "current scenario|what i built|why it should work|how i would measure it");
     ok("stop " + (i + 1) + " next and back buttons are on screen", await pg.evaluate(() => { const r = document.getElementById("t-next").getBoundingClientRect(); return r.bottom <= innerHeight && r.top >= 0; }));
     // the viewer cannot scroll the page away from the feature
     const y0 = await pg.evaluate(() => scrollY);
@@ -126,7 +126,7 @@ const shot = (pg, n) => pg.screenshot({ path: "/tmp/oc-" + n + ".png" });
     const cd = await pg.locator("#capture-detail").boundingBox(), rv = await pg.locator(".subnav button[data-tab=review]").boundingBox(), dt = await pg.locator(".topnav button[data-tab=district]").boundingBox();
     ok("1 to 4 sit on the Capture panel, 5 on the Review tab and 6 on the District tab", ["1", "2", "3", "4"].every((n) => near(ms.find((m) => m.n === n), cd)) && near(ms.find((m) => m.n === "5"), rv) && near(ms.find((m) => m.n === "6"), dt));
     const hint0 = await text("#builder-legend .lghint");
-    ok("hint (idle Teacher screen) says where each number is: 1-4 in this panel, 5 on the Review tab, 6 on the District tab", /Gaps 1-4 appear in this panel/.test(hint0) && /Gap 5 is on the Review tab/.test(hint0) && /Gap 6 is on the District tab/.test(hint0), hint0);
+    ok("hint (idle Teacher screen) says where each number is: 1-4 in this panel, 5 on the Review tab, 6 on the District tab", /Stops 1-4 appear in this panel/.test(hint0) && /Stop 5 is on the Review tab/.test(hint0) && /Stop 6 is on the District tab/.test(hint0), hint0);
     await shot(pg, "b0-idle-markers");
     await pg.locator('.bmark[data-step="review"]').click(); await pg.waitForTimeout(250);
     ok("tapping 5 explains it and offers 'Show me where this is'", /A review teachers will actually finish/.test(await text("#builder-card")) && /Show me where this is/.test(await text("#builder-show")));
@@ -138,11 +138,11 @@ const shot = (pg, n) => pg.screenshot({ path: "/tmp/oc-" + n + ".png" });
       const g = ms.filter((m) => m.where === "slot").sort((p, q) => p.x - q.x);
       ok("District: numbers 1 to 5 sit together in ONE row, in order, none wrapped onto a second row", g.map((m) => m.n).join("") === "12345" && g.every((m) => Math.abs(m.y - g[0].y) < 2) && g.every((m, i) => i === 0 || Math.abs(m.x - g[i - 1].x - 34) < 2), JSON.stringify(g.map((m) => [m.n, Math.round(m.x), Math.round(m.y)])));
       ok("District: that row is labelled 'On the Teacher screens' and clear of both tabs", (await vis(".bcap")) && /On the Teacher screens/.test(await text(".bcap")) && await pg.evaluate(() => { const c = document.querySelector(".bcap").getBoundingClientRect(); return [...document.querySelectorAll(".topnav button")].every((t) => { const r = t.getBoundingClientRect(); return c.left >= r.right || c.right <= r.left; }); }));
-      const tb = await pg.locator("#district table.dist").boundingBox(); const six = ms.find((m) => m.n === "6");
+      const tb = await pg.locator("#district .distwrap").boundingBox(); const six = ms.find((m) => m.n === "6");
       ok("District: number 6 sits on the district table", six.where === "live" && near(six, tb, 30));
     }
     const hint6 = await text("#builder-legend .lghint");
-    ok("hint (District screen) says 1-5 are on the Teacher screens and 6 is on the feature, and no longer claims a number is on a tab", /Gaps 1-5 are on the Teacher screens/.test(hint6) && /Gap 6 is marked on the feature itself/.test(hint6) && !/on a tab means/i.test(hint6) && !/tab\./.test(hint6), hint6);
+    ok("hint (District screen) says 1-5 are on the Teacher screens and 6 is on the feature, and no longer claims a number is on a tab", /Stops 1-5 are on the Teacher screens/.test(hint6) && /Stop 6 is marked on the feature itself/.test(hint6) && !/on a tab means/i.test(hint6) && !/tab\./.test(hint6), hint6);
     await shot(pg, "b1-district-markers");
     await pg.locator(".topnav button[data-tab=teacher]").click(); await pg.waitForTimeout(250);
     for (const [tab, name] of [["review", "Review"], ["metrics", "Your numbers"]]) {
@@ -150,7 +150,7 @@ const shot = (pg, n) => pg.screenshot({ path: "/tmp/oc-" + n + ".png" });
       ms = await read();
       ok("on " + name + " all six numbers are shown, in bounds and not overlapping", ms.length === 6 && ms.map((m) => m.n).sort().join("") === "123456" && noClash(ms) && ms.every((m) => m.x >= 0 && m.y >= 0 && m.x + m.w <= 1280), ms.map((m) => m.n + ":" + m.where).join(" "));
       const hk = await text("#builder-legend .lghint");
-      ok("on " + name + " the hint only describes numbers that are really there", ms.length === 6 && /Tap a number for the detail\./.test(hk) && !/on a tab means/i.test(hk) && (tab !== "review" || (/Gap 5 is marked on the feature itself|Gaps? [\d, -]*5[\d, -]* (is|are) marked on the feature itself/.test(hk))), hk);
+      ok("on " + name + " the hint only describes numbers that are really there", ms.length === 6 && /Tap a number for the detail\./.test(hk) && !/on a tab means/i.test(hk) && (tab !== "review" || (/Stop 5 is marked on the feature itself|Stops? [\d, -]*5[\d, -]* (is|are) marked on the feature itself/.test(hk))), hk);
       await shot(pg, "b2-" + tab + "-markers");
     }
     await pg.locator(".subnav button[data-tab=capture]").click(); await pg.waitForTimeout(250);
@@ -168,39 +168,39 @@ const shot = (pg, n) => pg.screenshot({ path: "/tmp/oc-" + n + ".png" });
   await pg.waitForTimeout(250);
   ok("Builder switch says On and is orange once turned on", /on/i.test(await text("#builder-toggle")) && !/off/i.test(await text("#builder-toggle")) && (await pg.locator("#builder-toggle").getAttribute("aria-checked")) === "true" && (await pg.evaluate(() => getComputedStyle(document.querySelector("#builder-toggle .bsw-track")).backgroundColor)) === "rgb(255, 106, 61)");
   await shot(pg, "p0-toggle-on");
-  ok("Builder mode shows a legend of all six gaps even before anything is in view", (await vis("#builder-legend")) && (await pg.locator("#builder-legend .lgbtn").count()) === 6);
+  ok("Builder mode shows a legend of all six stops even before anything is in view", (await vis("#builder-legend")) && (await pg.locator("#builder-legend .lgbtn").count()) === 6);
   await pg.locator("#stage .goal .why").first().scrollIntoViewIfNeeded(); await pg.waitForTimeout(250);
   const n = await pg.locator(".bmark").count();
   ok("Builder mode pins numbered markers onto the live capture screen", n >= 3, n + " markers");
   await shot(pg, "p1-pm-capture");
   await pg.locator('.bmark[data-step="why"]').click(); await pg.waitForTimeout(250);
-  ok("clicking a marker opens its gap card", (await vis("#builder-card")) && /Every suggestion says why/.test(await text("#builder-card")) && /how i would measure it/i.test(await text("#builder-card")));
+  ok("clicking a marker opens its stop card", (await vis("#builder-card")) && /Every suggestion says why/.test(await text("#builder-card")) && /how i would measure it/i.test(await text("#builder-card")));
   const whyTxt = await pg.locator("#stage .goal .why").first().innerText();
   ok("the Why line does not repeat 'the photo shows'", (whyTxt.match(/the photo shows/g) || []).length <= 1, whyTxt);
   {
     const cb = await pg.locator("#builder-card").boundingBox(); const tb = await pg.locator("#stage .goal .why").first().boundingBox();
     const ov = !(cb.x + cb.width <= tb.x || cb.x >= tb.x + tb.width || cb.y + cb.height <= tb.y || cb.y >= tb.y + tb.height);
-    ok("the gap card does not cover the feature it describes", !ov, JSON.stringify({ card: [cb.x, cb.y, cb.width, cb.height].map(Math.round), target: [tb.x, tb.y, tb.width, tb.height].map(Math.round) }));
+    ok("the stop card does not cover the feature it describes", !ov, JSON.stringify({ card: [cb.x, cb.y, cb.width, cb.height].map(Math.round), target: [tb.x, tb.y, tb.width, tb.height].map(Math.round) }));
     const boxes = await pg.locator(".bmark").evaluateAll((els) => els.map((e) => { const r = e.getBoundingClientRect(); return [r.x, r.y]; }));
     let clash = false; for (let i = 0; i < boxes.length; i++) for (let j = i + 1; j < boxes.length; j++) if (Math.abs(boxes[i][0] - boxes[j][0]) < 26 && Math.abs(boxes[i][1] - boxes[j][1]) < 26) clash = true;
     ok("Builder markers do not overlap each other", !clash, JSON.stringify(boxes.map((b) => b.map(Math.round))));
   }
-  ok("the guide appears only in the legend: not in the gap card, the header or the prototype screens", (await pg.locator("#builder-card img").count()) === 0 && (await pg.locator("header img, main img[src*='mascot'], .dock:not(#tour-card) img").count()) === 0 && (await pg.evaluate(() => { const i = document.querySelector("#builder-legend img.mascot"); return !!i && i.naturalWidth > 0; })));
+  ok("the guide appears only in the legend: not in the stop card, the header or the prototype screens", (await pg.locator("#builder-card img").count()) === 0 && (await pg.locator("header img, main img[src*='mascot'], .dock:not(#tour-card) img").count()) === 0 && (await pg.evaluate(() => { const i = document.querySelector("#builder-legend img.mascot"); return !!i && i.naturalWidth > 0; })));
   await shot(pg, "p2-pm-card");
   const pcb = await pg.locator("#builder-card").boundingBox();
-  ok("the gap card is fully on screen", pcb.x >= 0 && pcb.y >= 0 && pcb.x + pcb.width <= 1280 && pcb.y + pcb.height <= 900);
+  ok("the stop card is fully on screen", pcb.x >= 0 && pcb.y >= 0 && pcb.x + pcb.width <= 1280 && pcb.y + pcb.height <= 900);
   await pg.keyboard.press("Escape");
-  ok("Escape closes the gap card", !(await vis("#builder-card")));
+  ok("Escape closes the stop card", !(await vis("#builder-card")));
   ok("Builder mode does not block the prototype: Save draft still works", await (async () => { await pg.locator("#make-draft").click(); return (await text("#badge")).trim() === "2"; })());
   await pg.locator(".subnav button[data-tab=review]").click(); await pg.waitForTimeout(250); await pg.locator("#queue .goal").first().scrollIntoViewIfNeeded(); await pg.waitForTimeout(250);
   ok("markers follow to the Review screen", (await pg.locator(".bmark").count()) >= 1);
   await pg.locator(".topnav button[data-tab=district]").click(); await pg.waitForTimeout(250);
   ok("district view gets its own marker", (await pg.locator('.bmark[data-step="district"]').count()) === 1);
   await shot(pg, "p3-pm-district");
-  // legend works with nothing on screen: open a gap that lives on another screen and use "Show me"
+  // legend works with nothing on screen: open a stop that lives on another screen and use "Show me"
   await pg.locator(".topnav button[data-tab=teacher]").click(); await pg.locator(".subnav button[data-tab=capture]").click(); await pg.waitForTimeout(250);
   await pg.locator('#builder-legend .lgbtn[data-step="benchmark"]').click();
-  ok("legend opens a gap card", (await vis("#builder-card")) && /A benchmark for each child/.test(await text("#builder-card")));
+  ok("legend opens a stop card", (await vis("#builder-card")) && /A benchmark for each child/.test(await text("#builder-card")));
   await pg.locator("#builder-show").click(); await pg.waitForTimeout(350);
   ok("'Show me' brings the feature into view and closes the card", (await pg.locator("#stage .levels").first().isVisible()) && !(await vis("#builder-card")));
   ok("and pins its marker", (await pg.locator('.bmark[data-step="benchmark"]').count()) === 1);

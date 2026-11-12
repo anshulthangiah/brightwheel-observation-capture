@@ -5,7 +5,7 @@
  *   - turning it on shows every number at once, on every screen (a number sits on its live feature when that is on screen,
  *     otherwise on the tab or panel that leads to it), so the screen is never empty
  *   - a number opens the same four-row card the tour uses, docked in the same place
- *   - a legend lists all gaps at all times; its hint says where each number is on THIS screen, so it never describes something that is not there
+ *   - a legend lists all stops at all times; its hint says where each number is on THIS screen, so it never describes something that is not there
  *   - "Show me where this is" jumps to the feature, loading only what is missing
  *   - numbers never overlap each other and never sit on the text they mark
  * It reacts to the tour through events: tour:open (hide), tour:close (redraw), builder:request-on (turn on).
@@ -53,10 +53,10 @@
     const by = (k) => items.filter((it) => it.kind === k), one = (a) => a.length === 1;
     const parts = ["Tap a number for the detail."];
     const live = by("live"), slot = by("slot"), corner = by("corner");
-    if (live.length) parts.push(`Gap${one(live) ? "" : "s"} ${range(live.map((i) => i.s.n))} ${one(live) ? "is" : "are"} marked on the feature itself.`);
-    if (corner.length) parts.push(`Gap${one(corner) ? "" : "s"} ${range(corner.map((i) => i.s.n))} ${one(corner) ? "appears" : "appear"} ${B.cornerHint}.`);
-    if (slot.length) parts.push(`Gap${one(slot) ? "" : "s"} ${range(slot.map((i) => i.s.n))} ${one(slot) ? "is" : "are"} on ${SLOT.where}, so open ${SLOT.open} to see ${one(slot) ? "it" : "them"}.`);
-    by("badge").forEach((it) => parts.push(`Gap ${it.s.n} is on the ${it.label} tab.`));
+    if (live.length) parts.push(`Stop${one(live) ? "" : "s"} ${range(live.map((i) => i.s.n))} ${one(live) ? "is" : "are"} marked on the feature itself.`);
+    if (corner.length) parts.push(`Stop${one(corner) ? "" : "s"} ${range(corner.map((i) => i.s.n))} ${one(corner) ? "appears" : "appear"} ${B.cornerHint}.`);
+    if (slot.length) parts.push(`Stop${one(slot) ? "" : "s"} ${range(slot.map((i) => i.s.n))} ${one(slot) ? "is" : "are"} on ${SLOT.where}, so open ${SLOT.open} to see ${one(slot) ? "it" : "them"}.`);
+    by("badge").forEach((it) => parts.push(`Stop ${it.s.n} is on the ${it.label} tab.`));
     return parts.join(" ");
   }
 
@@ -90,7 +90,7 @@
       placed.push(it);
       const b = document.createElement("button");
       b.type = "button"; b.className = "bmark"; b.textContent = it.s.n; b.dataset.step = it.s.id; b.dataset.where = it.kind;
-      b.setAttribute("aria-label", `Gap ${it.s.n}: ${it.s.title}`);
+      b.setAttribute("aria-label", `Stop ${it.s.n}: ${it.s.title}`);
       b.style.left = it.x + "px"; b.style.top = it.y + "px";
       markers.appendChild(b);
     });
@@ -101,8 +101,8 @@
   function drawLegend() {
     legend.hidden = !S.on || G.state.tourOpen;
     if (legend.hidden) return;
-    legend.innerHTML = `<div class="lghead">${mimg("wave", 40)}<div class="lgtitle">${esc(B.title)}: ${C.STEPS.length} gaps</div></div><div class="lgrow">${C.STEPS.map((s) =>
-      `<button type="button" class="lgbtn ${S.markerOpen === s.id ? "on" : ""}" data-step="${s.id}" title="${esc(s.title)}" aria-label="Gap ${s.n}: ${esc(s.title)}">${s.n}</button>`).join("")}</div>
+    legend.innerHTML = `<div class="lghead">${mimg("wave", 40)}<div class="lgtitle">${esc(B.title)}: ${C.STEPS.length} stops</div></div><div class="lgrow">${C.STEPS.map((s) =>
+      `<button type="button" class="lgbtn ${S.markerOpen === s.id ? "on" : ""}" data-step="${s.id}" title="${esc(s.title)}" aria-label="Stop ${s.n}: ${esc(s.title)}">${s.n}</button>`).join("")}</div>
       <div class="lghint">${esc(S.hint || "Tap a number for the detail.")}</div>`;
   }
 
@@ -112,7 +112,7 @@
     S.markerOpen = id;
     const target = firstVisible(s.pin);
     card.className = "dock"; card.style.cssText = "";
-    card.innerHTML = `<div class="thead"><span class="tstep">Gap ${s.n}</span>${srcChip(s.src)}<button id="builder-x" class="x" type="button" aria-label="Close">&times;</button></div>
+    card.innerHTML = `<div class="thead"><span class="tstep">Stop ${s.n}</span>${srcChip(s.src)}<button id="builder-x" class="x" type="button" aria-label="Close">&times;</button></div>
       <h2 id="builder-title">${esc(s.title)}</h2><div class="tscroll">${rows(s)}</div>
       <div class="tfoot"><div class="tbtns"><button id="builder-show" class="primary" type="button" data-step="${s.id}">${target ? "Scroll to it" : "Show me where this is"}</button></div></div>`;
     card.hidden = false; document.body.classList.add("builder-docked");
@@ -121,7 +121,7 @@
   }
   function closeCard() { card.hidden = true; S.markerOpen = null; document.body.classList.remove("builder-docked"); requestAnimationFrame(draw); }
 
-  // take the viewer to the live feature for a gap, loading just enough of the app to show it
+  // take the viewer to the live feature for a stop, loading just enough of the app to show it
   function showMe(id) {
     const s = C.STEPS.find((x) => x.id === id); if (!s) return;
     host.show(s.setup);

@@ -37,7 +37,7 @@
     kicker: "Portfolio concept",
     title: "A two-minute tour",
     p1: "Brightwheel already ships Smart observations: say or type a note and it drafts the observation. This concept is about the step after that: observations a teacher can trust, and results a district or state can see.",
-    p2: "Six stops. Each shows one gap: what exists today, what I built, why it should work, and how I would measure it.",
+    p2: "Six stops. Each covers one or more gaps: the current scenario, what I built, why it should work, and how I would measure it.",
     note: "Built by Anshul Thangiah as a portfolio concept for the Principal Product Manager, Education role. A scripted simulation: no AI model runs, and every child, photo, voice and school figure is synthetic. Not affiliated with brightwheel. Where a claim comes from is labelled, and support-chatbot answers are marked unverified."
   };
 
@@ -47,7 +47,7 @@
   const STEPS = [
     {
       id: "why", n: 1, title: "Every suggestion says why, and the photo counts", src: "both",
-      today: "Smart observations reads only the words typed or spoken, and suggests skills and benchmarks with no reason or confidence. The photo is added afterwards and plays no part.",
+      scenario: "Smart observations reads only the words typed or spoken, and suggests skills and benchmarks with no reason or confidence. The photo is added afterwards and plays no part.",
       built: "Each suggested skill shows the words you said and what the photo shows. A photo can be the second piece of evidence that makes a suggestion High confidence, but it can never create a suggestion on its own.",
       why: "Recognition over recall: checking a reason you can see is faster than working one out. A teacher can judge a suggestion at a glance.",
       measure: "% of drafts a teacher approves without changing them, and seconds spent per draft in review.",
@@ -56,7 +56,7 @@
     },
     {
       id: "benchmark", n: 2, title: "A benchmark for each child, with their history", src: "bot",
-      today: "The suggested benchmark ignores the child's earlier ones. If two teachers rate the same skill differently, both ratings stay in the record and nothing flags it.",
+      scenario: "The suggested benchmark ignores the child's earlier ones. If two teachers rate the same skill differently, both ratings stay in the record and nothing flags it.",
       built: "Each child gets their own benchmark, with the last one, who gave it and when, shown beside it. A jump of 2 or more levels asks the teacher to check it before it is logged.",
       why: "Feedback loop: seeing what the last rating was lets the teacher decide whether a change is real, instead of trusting the suggestion blindly.",
       measure: "% of big jumps (2 or more levels) that the teacher changes after the check. Near 0% means the check is noise. A high % means it catches real mistakes or disagreement between teachers.",
@@ -65,7 +65,7 @@
     },
     {
       id: "coverage", n: 3, title: "Who is still missing, shown while capturing", src: "both",
-      today: "Coverage lives in a web report the teacher has to open. The rating screen shows 'No recent observation' per child, but there are no reminders or weekly targets.",
+      scenario: "Coverage lives in a web report the teacher has to open. The rating screen shows 'No recent observation' per child, but there are no reminders or weekly targets.",
       built: "While capturing, the matched skill shows how many children already have an observation in the last three months, and names the children who have none.",
       why: "Zeigarnik effect: people remember unfinished things. Showing who is still missing at the moment of capture turns a hidden report into a visible to-do.",
       measure: "% of children with at least one recent observation in each learning area (for example Math, or Language and Literacy). A child with none in an area is a gap.",
@@ -74,7 +74,7 @@
     },
     {
       id: "visibility", n: 4, title: "Who sees it is a choice, and injuries are never mapped", src: "bot",
-      today: "Observations are family-visible by default, and the teacher must switch each one to Staff only. A note about an injury is treated like any other and may get skill suggestions.",
+      scenario: "Observations are family-visible by default, and the teacher must switch each one to Staff only. A note about an injury is treated like any other and may get skill suggestions.",
       built: "An explicit choice at capture and in review. Notes about injury or illness are not mapped to skills, are locked to Staff only, and go to an incident record.",
       why: "Default bias: people mostly keep the default. When the default is risky, safety should not depend on a teacher remembering to change it.",
       measure: "% of injury or illness notes correctly kept off learning records (target near 100%). % of entries switched to Staff only after families already saw them (lower is better).",
@@ -83,7 +83,7 @@
     },
     {
       id: "review", n: 5, title: "A review teachers will actually finish", src: "both",
-      today: "There is no director approval or reconciliation step before an observation shows in reports. The teacher reviews each draft before logging it.",
+      scenario: "There is no director approval or reconciliation step before an observation shows in reports. The teacher reviews each draft before logging it.",
       built: "Drafts are sorted into four groups: needs attention, check the level, clear matches, and needs your choice. Big jumps wait for a check and are never bulk-approved. Clear matches can be approved together. Everything can be undone.",
       why: "Chunking and decision fatigue: a few grouped decisions get finished, and a long mixed list gets abandoned. An unfinished review means missing observations.",
       measure: "Minutes a teacher spends in review per day (target under 3), and % of drafts approved without changes.",
@@ -92,12 +92,12 @@
     },
     {
       id: "district", n: 6, title: "Something a district or state can see and export", src: "both",
-      today: "Assessment reports are per site and export as PDF only. They are not in the multi-site dashboard. Brightwheel's own pages describe organization-wide visibility of activity, so this gap is partly unconfirmed.",
+      scenario: "Assessment reports are per site and export as PDF only. They are not in the multi-site dashboard. Brightwheel's own pages describe organization-wide visibility of activity, so this gap is partly unconfirmed.",
       built: "A sponsor view of evidence quality across sites, with a CSV export. It shows coverage and consistency, not child outcomes, on purpose: results mean little until the evidence behind them is consistent.",
       why: "A buyer funds what it can verify. A sponsor who can see consistent evidence across a whole network has a reason to pay for assessments there, which makes multi-year terms testable.",
       measure: "Product test: a sponsor finds the lowest-coverage site and exports the data in under two minutes, without help. Business test: of the first three sponsors shown this view, how many agree to a paid pilot.",
       setup: { view: "district" },
-      target: "#district table.dist", pin: "#district table.dist", fallback: [".topnav button[data-tab=district]"]
+      target: "#district .distwrap", pin: "#district .distwrap", fallback: [".topnav button[data-tab=district]"]
     }
   ];
 
@@ -113,7 +113,7 @@
     ],
     ctas: {
       try: { title: "Try the prototype", desc: "Capture a moment yourself, start to finish", focus: "#capture-list li" },
-      builder: { title: "Turn on Builder mode", desc: "See each gap marked on the live screens" }
+      builder: { title: "Turn on Builder mode", desc: "See every tour stop marked on the live screens" }
     },
     limits: "It is a scripted simulation with synthetic data and a rule-based stand-in for the AI. It does not show real accuracy, and no sponsor has been asked yet.",
     plan: [

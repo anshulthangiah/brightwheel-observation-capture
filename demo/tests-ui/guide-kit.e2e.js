@@ -1,6 +1,6 @@
 // Generic end-to-end test for the Product Builder guide kit (Take a Tour + Builder mode).
 // It reads window.GUIDE from the page, so the same file tests any project that uses the kit.
-//   node tests-ui/guide-kit.js [folder-with-index.html] [start-file]
+//   node tests-ui/guide-kit.e2e.js [folder-with-index.html] [start-file]
 // Needs playwright + chromium. Pass criteria are the signature rules in the take-a-tour and builder-mode skills.
 const { chromium } = require("playwright");
 const http = require("http"), fs = require("fs"), path = require("path");
@@ -42,7 +42,7 @@ const shot = (pg, n) => pg.screenshot({ path: "/tmp/guide-kit-" + n + ".png" });
     ok(tag + "title and 'Stop " + (i + 1) + " of " + N + "'", t.includes(s.title) && new RegExp("Stop " + (i + 1) + " of " + N).test(t));
     ok(tag + "one source label", (await pg.locator("#tour-card .srcchip").count()) === 1);
     const order = (await pg.locator("#tour-card dt").allInnerTexts()).map((x) => x.toLowerCase()).join("|");
-    ok(tag + "four rows in the signature order, one column", order === "today|what i built|why it should work|how i would measure it", order);
+    ok(tag + "four rows in the signature order, one column", order === "current scenario|what i built|why it should work|how i would measure it", order);
     ok(tag + "guide picture and name in the card header", (await mascotLoaded("#tour-card .thead")) && new RegExp(name).test(await text("#tour-card .thead")));
     const tgt = await box(s.target), rb = await pg.locator("#tour-ring").boundingBox(), cb = await pg.locator("#tour-card").boundingBox();
     ok(tag + "the live feature exists on screen", !!tgt, s.target);
@@ -89,6 +89,33 @@ const shot = (pg, n) => pg.screenshot({ path: "/tmp/guide-kit-" + n + ".png" });
   await pg.locator("#t-next").click(); await pg.locator("#t-skip").click(); await pg.waitForTimeout(700);
   ok("skipping right after a stop leaves no ring, no dimming, no lock", !(await vis("#tour-ring")) && !(await vis("#tour-dim")) && (await pg.evaluate(() => getComputedStyle(document.documentElement).overflow !== "hidden")));
 
+
+  // ================================================================ Phone sizes: the spotlight must sit on the feature, nothing wider than the screen
+  for (const [label, w, h] of [["phone 375x667", 375, 667], ["phone 390x844", 390, 844], ["phone 412x915", 412, 915]]) {
+    const mctx = await b.newContext({ viewport: { width: w, height: h }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+    const mp = await mctx.newPage(); const merrs = []; mp.on("pageerror", (e) => merrs.push(e.message));
+    await mp.addInitScript(() => { window.SIM_SPEED = 0.05; });
+    await mp.goto(base + (START === "index.html" ? "" : START));
+    await mp.waitForSelector("#tour-card:not([hidden])", { timeout: 5000 });
+    await mp.locator("#t-next").click();
+    for (let i = 0; i < N; i++) {
+      await mp.waitForTimeout(700);
+      const m = await mp.evaluate((i) => {
+        const s = window.GUIDE.STEPS[i], t = window.Guide.firstVisible(s.target), ring = document.getElementById("tour-ring"), card = document.getElementById("tour-card");
+        if (!t) return { missing: true };
+        const rr = ring.getBoundingClientRect(), tr = t.getBoundingClientRect(), cr = card.getBoundingClientRect();
+        const inter = Math.max(0, Math.min(rr.right, tr.right) - Math.max(rr.left, tr.left)) * Math.max(0, Math.min(rr.bottom, tr.bottom) - Math.max(rr.top, tr.top));
+        return { missing: false, ringShown: !ring.hidden, overlap: Math.round(100 * inter / (tr.width * tr.height)), above: Math.round(Math.min(tr.bottom, cr.top) - Math.max(tr.top, 0)), need: Math.round(Math.min(60, tr.height)), tooWide: (() => { const vw = document.documentElement.clientWidth, bad = []; const inScroller = (el) => { for (let a = el.parentElement; a && a !== document.body; a = a.parentElement) { const o = getComputedStyle(a).overflowX; if (o === "auto" || o === "scroll" || o === "hidden") return true; } return false; }; document.querySelectorAll("body *").forEach((el) => { if (el.closest("#tour-root,#builder-root,#builder-legend")) return; const r = el.getBoundingClientRect(); if (!r.width || r.right <= vw + 1) return; if (getComputedStyle(el).position === "fixed" || inScroller(el)) return; bad.push(el.tagName.toLowerCase() + (el.id ? "#" + el.id : "") + "@" + Math.round(r.right)); }); return bad.slice(0, 3); })(), vw: document.documentElement.clientWidth, nextInView: (() => { const n = document.getElementById("t-next").getBoundingClientRect(); return n.bottom <= innerHeight && n.right <= innerWidth && n.left >= 0; })() };
+      }, i);
+      ok(label + ", stop " + (i + 1) + ": ring sits on the feature, it is visible above the card, nothing sticks out past the right edge of the screen (a table may scroll inside its own box), Next is on screen",
+        !m.missing && m.ringShown && m.overlap >= 80 && m.above >= m.need && m.tooWide.length === 0 && m.nextInView, JSON.stringify(m));
+      if (i === 0) await mp.screenshot({ path: "/tmp/guide-kit-phone-" + w + ".png" });
+      if (i < N - 1) await mp.locator("#t-next").click();
+    }
+    ok(label + ": no page errors", merrs.length === 0, merrs.join("|"));
+    await mctx.close();
+  }
+
   // ================================================================ Builder mode
   const sw = "#builder-toggle";
   ok("Builder mode starts Off: the switch says so and nothing is drawn", /off/i.test(await text(sw)) && (await pg.locator(sw).getAttribute("aria-checked")) === "false" && (await pg.locator(".bmark").count()) === 0 && !(await vis("#builder-legend")));
@@ -99,13 +126,14 @@ const shot = (pg, n) => pg.screenshot({ path: "/tmp/guide-kit-" + n + ".png" });
   ok("every number is fully on screen", ms.every((m) => m.x >= 0 && m.y >= 0 && m.x + m.w <= 1280 && m.y + m.h <= 900));
   let clash = false; for (let i = 0; i < ms.length; i++) for (let j = i + 1; j < ms.length; j++) if (Math.abs(ms[i].x - ms[j].x) < 28 && Math.abs(ms[i].y - ms[j].y) < 28) clash = true;
   ok("no two numbers overlap", !clash);
-  ok("the legend lists every gap, with the guide picture", (await pg.locator("#builder-legend .lgbtn").count()) === N && (await mascotLoaded("#builder-legend")));
+  ok("Builder mode calls them stops, never gaps: the legend, its hint and the number labels use the tour's word", !/\bgaps?\b/i.test(await text("#builder-legend")) && (await pg.locator("#builder-legend .lgbtn").first().getAttribute("aria-label")).startsWith("Stop 1"));
+  ok("the legend lists every stop, with the guide picture", (await pg.locator("#builder-legend .lgbtn").count()) === N && (await mascotLoaded("#builder-legend")));
   const hint = await text("#builder-legend .lghint");
   ok("the hint starts 'Tap a number for the detail.' and says where numbers are", /^Tap a number for the detail\./.test(hint) && hint.length > 40, hint);
   await shot(pg, "builder-on");
   await pg.locator('.bmark[data-step="' + C.STEPS[0].id + '"]').click(); await pg.waitForTimeout(250);
   const bc = await pg.locator("#builder-card").boundingBox();
-  ok("a number opens its card with the same four rows in the same order", (await text("#builder-card")).includes(C.STEPS[0].title) && (await pg.locator("#builder-card dt").allInnerTexts()).map((x) => x.toLowerCase()).join("|") === "today|what i built|why it should work|how i would measure it");
+  ok("a number opens its card with the same four rows in the same order", (await text("#builder-card")).includes(C.STEPS[0].title) && (await pg.locator("#builder-card dt").allInnerTexts()).map((x) => x.toLowerCase()).join("|") === "current scenario|what i built|why it should work|how i would measure it");
   ok("the card is docked in the same place as the tour card", Math.abs(bc.x + bc.width - 1268) <= 2 && bc.width >= 370 && bc.width <= 390);
   const pin = await box(C.STEPS[0].pin);
   ok("the card does not cover the feature it describes", !pin || !overlap(bc, pin));
@@ -114,7 +142,7 @@ const shot = (pg, n) => pg.screenshot({ path: "/tmp/guide-kit-" + n + ".png" });
   await pg.keyboard.press("Escape");
   ok("Escape closes the card", !(await vis("#builder-card")));
   await pg.locator('#builder-legend .lgbtn[data-step="' + C.STEPS[N - 1].id + '"]').click(); await pg.waitForTimeout(200);
-  ok("the legend opens any gap, even when its feature is not on this screen", await vis("#builder-card") && (await text("#builder-card")).includes(C.STEPS[N - 1].title));
+  ok("the legend opens any stop, even when its feature is not on this screen", await vis("#builder-card") && (await text("#builder-card")).includes(C.STEPS[N - 1].title));
   await pg.locator("#builder-show").click(); await pg.waitForTimeout(400);
   ok("'Show me' closes the card and brings the feature into view", !(await vis("#builder-card")) && !!(await box(C.STEPS[N - 1].pin)));
   await pg.locator(sw).click(); await pg.waitForTimeout(250);
