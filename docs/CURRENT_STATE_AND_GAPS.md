@@ -40,11 +40,11 @@ Of the 15 gaps, 11 are addressed in the demo, 2 partly, and 2 are not built. Alm
 | G02 | Suggestions come with no confidence | Bot | Each suggestion shows High or Medium confidence. High is pre-selected. Medium needs the teacher's choice | Addressed in the demo | Stop 1 |
 | G03 | The photo is added after drafting and plays no part in the suggestion | Bot | The photo can be the second piece of evidence. It can never create a suggestion alone | Addressed in the demo | Stop 1 |
 | G04 | Suggestions ignore the child's earlier benchmark | Bot | Shows the last benchmark, who gave it and when, beside the new one | Addressed in the demo | Stop 2 |
-| G05 | Nothing flags a large jump in a child's level | Bot | A jump of 2 or more levels asks for a check before logging and is never bulk-approved. The threshold of 2 is an assumption | Addressed in the demo | Stop 2 |
-| G06 | Two teachers can rate the same skill differently and both ratings stay, with nothing to flag it | Bot | Shows who gave the last rating and flags a jump of 2 or more levels. A one-level difference between two teachers is not flagged | Partly addressed | Stop 2 |
+| G05 | Nothing flags a large jump in a child's level | Bot | A jump or a drop of 2 or more levels asks for a check before logging and is never bulk-approved. The threshold of 2 is an assumption | Addressed in the demo | Stop 2 |
+| G06 | Two teachers can rate the same skill differently and both ratings stay, with nothing to flag it | Bot | Shows who gave the last rating and flags a jump or a drop of 2 or more levels. A one-level difference between two teachers is not flagged | Partly addressed | Stop 2 |
 | G07 | One note about several children | Bot (the answer says per-child benchmarks can already differ) | A separate benchmark for each child, each with its own history and flag | Addressed in the demo | Stop 2 |
 | | **Capturing and covering every child** | | | | |
-| G08 | Coverage is a web report the teacher has to go and open | Doc, Bot | A nudge at capture: how many children have an observation for this skill in the window, and who has none | Addressed in the demo | Stop 3 |
+| G08 | Coverage is a web report the teacher has to go and open | Doc, Bot | A nudge at capture: how many children have an observation in this learning area in the last three months, and who has none | Addressed in the demo | Stop 3 |
 | G09 | No reminders or weekly targets | Bot | A teacher-chosen review reminder. The demo only previews it, and no reminder is sent. No weekly targets | Partly addressed | Stop 3 |
 | | **Safety and privacy** | | | | |
 | G10 | Notes about an injury or illness are treated like any other and may get skill suggestions | Bot | Never mapped to skills, locked to Staff only, and sent to an incident record | Addressed in the demo | Stop 4 |

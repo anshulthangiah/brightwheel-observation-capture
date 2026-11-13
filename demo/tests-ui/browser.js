@@ -26,9 +26,9 @@ const shot = (pg, n, full) => pg.screenshot({ path: "/tmp/oc-" + n + ".png", ful
   // c1 Leo: count jump 2 -> 5, nudge, why line, per-child benchmark, family-visible
   await play(0);
   ok("why line names the words", /Why: you said .*counted/.test(await text("#stage")));
-  ok("per-child benchmark shown with the earlier one", /Leo\s+Benchmark\s*5/.test(await text("#stage")) && /last: 2/.test(await text("#stage")));
+  ok("per-child benchmark shown with the earlier one", /Leo\s+Benchmark\s*5/.test(await text("#stage")) && /Last rating: 2/.test(await text("#stage")));
   ok("a jump of 2 or more levels is named where the teacher decides: 'Jump of 3 levels. Needs a check.'", /Jump of 3 levels\. Needs a check\./.test(await text("#stage")) && (await pg.locator("#stage .jumptag").count()) === 1);
-  ok("coverage nudge names who has nothing yet", /children have an observation in this three-month window/.test(await text("#stage")) && /Nothing yet for/.test(await text("#stage")));
+  ok("coverage nudge names who has nothing yet", /children have an observation in this learning area in the last three months/.test(await text("#stage")) && /Nothing yet for/.test(await text("#stage")));
   ok("visibility control with both options visible", (await vis('#stage [data-vis="family"]')) && (await vis('#stage [data-vis="staff_only"]')) && /Who can see this once logged/.test(await text("#stage")));
   ok("default is Families and staff", (await pg.locator('#stage [data-vis="family"]').getAttribute("aria-pressed")) === "true");
   // layout: the draft badge and the audio player sit on one row, and the label text is not squeezed
@@ -61,7 +61,7 @@ const shot = (pg, n, full) => pg.screenshot({ path: "/tmp/oc-" + n + ".png", ful
   await pg.locator('.subnav button[data-tab="review"]').click();
   ok("review has a 'Check the level' group", /Check the level \(2\)/.test(await text("#queue")));
   ok("review shows the jump label on both flagged drafts", (await pg.locator("#queue .jumptag").count()) === 2 && /Jump of 2 levels/.test(await text("#queue")));
-  ok("flag names who rated earlier", /Mr\. Diaz/.test(await text("#queue")) && /jump of 3/.test(await text("#queue")) && /jump of 2/.test(await text("#queue")));
+  ok("flag names who rated earlier", /Mr\. Diaz/.test(await text("#queue")) && /Jump of 3 levels/.test(await text("#queue")) && /Jump of 2 levels/.test(await text("#queue")));
   await shot(pg, "n3-review", true);
   // flagged drafts are not bulk-approvable
   ok("no bulk button while only flagged drafts are clear", (await pg.locator('[data-act="bulk"]').count()) === 0);
@@ -100,13 +100,13 @@ const shot = (pg, n, full) => pg.screenshot({ path: "/tmp/oc-" + n + ".png", ful
   ok("district view shows no outcome scores", !/average level|outcome score/i.test(await text("#district")));
   await shot(pg, "n4-district");
   await pg.locator("#export-csv").click();
-  ok("CSV preview shown", (await vis("#csv-preview")) && /^site,type,rooms/.test(await text("#csv-preview")));
+  ok("CSV data shown after 'Show the data'", await (async () => { await pg.locator("#show-csv").click(); return (await vis("#csv-preview")) && /^site,type,rooms/.test(await text("#csv-preview")); })());
   await pg.locator('.topnav button[data-tab="teacher"]').click();
   ok("back to Teacher restores the safety banner", await vis("#banner"));
 
   // metrics
   await pg.locator('.topnav button[data-tab="teacher"]').click(); await pg.locator('.subnav button[data-tab="metrics"]').click();
-  ok("metrics tab shows level jumps caught", /Level jumps caught/.test(await text("#metrics")));
+  ok("metrics tab shows level jumps caught", /Level changes caught/.test(await text("#metrics")));
 
   // ---- Keep / Remove question when a selected child is not in the voice note
   await pg.locator('.subnav button[data-tab="capture"]').click();

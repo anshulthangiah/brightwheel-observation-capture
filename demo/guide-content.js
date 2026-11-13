@@ -57,16 +57,16 @@
     {
       id: "benchmark", n: 2, title: "A benchmark for each child, with their history", src: "bot",
       scenario: "The suggested benchmark ignores the child's earlier ones. If two teachers rate the same skill differently, both ratings stay in the record and nothing flags it.",
-      built: "Each child gets their own benchmark, with the last one, who gave it and when, shown beside it. A jump of 2 or more levels asks the teacher to check it before it is logged.",
+      built: "Each child gets their own benchmark, with the last one, who gave it and when, shown beside it. A jump or a drop of 2 or more levels asks the teacher to check it before it is logged.",
       why: "Feedback loop: seeing what the last rating was lets the teacher decide whether a change is real, instead of trusting the suggestion blindly.",
-      measure: "% of big jumps (2 or more levels) that the teacher changes after the check. Near 0% means the check is noise. A high % means it catches real mistakes or disagreement between teachers.",
+      measure: "% of big jumps and drops (2 or more levels) that the teacher changes after the check. Near 0% means the check is noise. A high % means it catches real mistakes or disagreement between teachers.",
       setup: { capture: "c1", view: "capture" },
       target: "#stage .levels", pin: "#stage .levels, #queue .levels", fallback: CAPTURE_HOME
     },
     {
       id: "coverage", n: 3, title: "Who is still missing, shown while capturing", src: "both",
       scenario: "Coverage lives in a web report the teacher has to open. The rating screen shows 'No recent observation' per child, but there are no reminders or weekly targets.",
-      built: "While capturing, the matched skill shows how many children already have an observation in the last three months, and names the children who have none.",
+      built: "While capturing, the nudge names the learning area of the matched skill, for example Mathematics. It shows how many children already have an observation in that area in the last three months, and names the children who have none.",
       why: "Zeigarnik effect: people remember unfinished things. Showing who is still missing at the moment of capture turns a hidden report into a visible to-do.",
       measure: "% of children with at least one recent observation in each learning area (for example Math, or Language and Literacy). A child with none in an area is a gap.",
       setup: { capture: "c1", view: "capture" },

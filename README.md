@@ -6,7 +6,7 @@ An independent product concept for early-learning software: a spec and a working
 
 **[Try the live demo](https://anshulthangiah.github.io/brightwheel-observation-capture/)** (opens a short guided tour)
 
-Current version: **v1.1.0**. Release notes are in [CHANGELOG.md](CHANGELOG.md). The problems fixed and still open are in [Known issues and backlog](#known-issues-and-backlog).
+Current version: **v1.2.0**. Release notes are in [CHANGELOG.md](CHANGELOG.md). The problems fixed and still open are in [Known issues and backlog](#known-issues-and-backlog).
 
 ![A 35-second tour of the demo: six stops, then Builder mode](docs/assets/demo-tour.gif)
 
@@ -39,7 +39,7 @@ Teachers write free text and take photos. Matching one note to one of 73 skills 
 - The model proposes. The teacher confirms. It never sets a child's level on its own.
 - Every suggestion shows its reason: the words said and what the photo shows.
 - A photo can support a suggestion. It can never create one alone.
-- A jump of two or more levels needs a check and can never be bulk-approved.
+- A jump or a drop of two or more levels needs a check and can never be bulk-approved.
 - Notes about injury or illness are never mapped. They stay Staff only and go to an incident record.
 - When it is not sure, it says so and leaves the choice to the teacher.
 
@@ -63,15 +63,15 @@ The demo has no AI model, so I tested the part that stands in for one: the keywo
 | | Before | After |
 |---|---|---|
 | Tuning cases passed (14) | 4 | 14 |
-| Held-out cases passed (6) | 1 | 5 |
+| Held-out cases passed (6) | 1 | 6 |
 | Injury, illness or safeguarding notes flagged | 2 of 6 | 6 of 6 |
 | Harmless look-alike notes wrongly flagged | 5 of 5 | 0 of 5 |
 
-**What changed in the rules.** They now catch wording like "threw up", "nosebleed", "her dad hits her" and "fell off". They also stop flagging "fell asleep", "hit the drum" and "fall leaves", and they ignore evidence the child did not produce ("did not count"). All 10 scripted demo moments behave exactly as before, and a test checks that.
+**What changed in the rules.** They now catch wording like "threw up", "nosebleed", "her dad hits her" and "fell off". They also stop flagging "fell asleep", "hit the drum" and "fall leaves", and they ignore evidence the child did not produce ("did not count"). In v1.2.0 they also count one phrase as one piece of evidence. That changed one of the 10 scripted demo moments, Maya's paint note, from High to Medium, and a test checks that the other nine are unchanged.
 
-**What the evals found that I have not fixed.** One held-out case still fails: the rules count one phrase as two pieces of evidence, so the demo's own Maya example shows High confidence when it should be Medium. A short probe after tuning also found four injury and safeguarding notes the rules miss entirely. These are in the [backlog](#known-issues-and-backlog) below.
+**What the evals found that I have not fixed.** A short probe after tuning found four injury and safeguarding notes the rules miss entirely, and a few harmless notes that are still flagged. These are in the [backlog](#known-issues-and-backlog) below. The one held-out failure, one phrase counted as two pieces of evidence, was fixed in v1.2.0.
 
-**How far to trust the numbers.** Twenty cases is a worked example of the method, not a measurement. I wrote both the rules and the cases, and I wrote the held-out cases after seeing how the rules failed, so the held-out set is weaker than a blind one. [`evals/README.md`](evals/README.md) has the full method, every case in [`evals/RESULTS.md`](evals/RESULTS.md), and what the numbers do not prove.
+**How far to trust the numbers.** Twenty cases is a worked example of the method, not a measurement. I wrote both the rules and the cases, and I wrote the held-out cases after seeing how the rules failed, so the held-out set is weaker than a blind one. I fixed the failing held-out case (H06) in v1.2.0, so that case no longer counts as held out. The held-out result that carries weight is the v1.1.0 rules scoring 5 of 5 on the other five. [`evals/README.md`](evals/README.md) has the full method, every case in [`evals/RESULTS.md`](evals/RESULTS.md), and what the numbers do not prove.
 
 ## What is in scope, and what is not
 
@@ -79,7 +79,7 @@ The demo has no AI model, so I tested the part that stands in for one: the keywo
 
 1. Capture with photo and voice, with children picked from the names spoken.
 2. A suggested skill and a separate benchmark for each child, with a "why" line.
-3. The earlier benchmark, who gave it and when, and a check step when a new one jumps 2 or more levels.
+3. The earlier rating, who gave it and when, and a check step when a new benchmark is 2 or more levels above or below it.
 4. A coverage nudge at capture, and a safety route for sensitive notes.
 5. An end-of-day review with undo, and a district view of evidence quality with a CSV export.
 
@@ -111,12 +111,12 @@ A scripted simulation. Nothing is typed and no AI model runs.
 2. **Capture.** Pick a moment, tap the shutter, tap to record. The transcript appears, the photo is "read", and the children are picked from the names spoken. Select a child the note does not mention and it asks whether to keep or remove them.
 3. **Choose who sees it.** An explicit "Who can see this once logged?" choice (Families and staff, or Staff only) at capture and again in review.
 4. **Explain.** Each suggested skill says why: the words said, and what the photo shows.
-5. **Check.** Each child gets their own benchmark, shown beside the last one, who gave it and when.
-6. **Nudge.** The matched skill shows how many children have an observation in this window and who has none.
+5. **Check.** Each child gets their own benchmark, shown beside the last rating, who gave it and when. A jump or a drop of 2 or more levels asks for a check.
+6. **Nudge.** The learning area of the matched skill (for example Mathematics) shows how many children have an observation in that area in the last three months, and who has none.
 7. **Route.** Notes about injury or illness are never mapped, are locked to Staff only and go to an incident record.
 8. **Review.** An end-of-day queue with undo, and a completion screen that lists who has no observation yet.
 9. **Edit and delete.** Before a draft is logged you can edit what was heard, change who it is about, start over, or discard it. Saving an edit asks "Save these changes?" first, shows before and after, and warns if the note names different children from the ones selected. Editing re-runs the same keyword rules on the new words. It is not an AI model, and the screen says so.
-10. **District.** Made-up site figures for evidence quality, with a CSV export.
+10. **District.** Made-up site figures for evidence quality. Export CSV sends a file to your browser and says so. A separate Show the data button opens the raw data.
 
 ## What is in here
 
@@ -128,8 +128,8 @@ A scripted simulation. Nothing is typed and no AI model runs.
 | `demo/guide-content.js` | All the words for the tour and Builder mode: six stop cards, one source of content |
 | `demo/guide-common.js`, `demo/tour.js`, `demo/builder.js` and their `.css` files | The reusable guide kit: Take a Tour and Builder mode. The same code runs in my other projects |
 | `evals/` | 20 tricky test notes for the keyword rules, scored before and after tuning, with the results and where they still fail. See [`evals/README.md`](evals/README.md) |
-| `demo/tests/` | 69 automated tests of the rules, the framework structure, the trust logic, the review logic and the tour and Builder mode content |
-| `demo/tests-ui/` | Real-Chromium tests: the prototype flow (76 checks), the tour and Builder mode on this product (131 checks), and a generic test of the guide kit that includes three phone sizes (120 checks) |
+| `demo/tests/` | 79 automated tests of the rules, the framework structure, the trust logic, the review logic and the tour and Builder mode content |
+| `demo/tests-ui/` | Real-Chromium tests: the prototype flow (76 checks), the tour and Builder mode on this product (131 checks), a generic test of the guide kit that includes three phone sizes (120 checks), and the v1.2.0 fixes on two phone sizes and a wide screen (25 checks) |
 | [`CHANGELOG.md`](CHANGELOG.md) | Release notes for each version, newest first. The GitHub Release for each version uses the same text |
 | `docs/assets/demo-tour.gif` | The animation at the top of this page. Made by `demo/make-gif.js` from the live demo |
 
@@ -162,6 +162,7 @@ npx playwright install chromium   # downloads the browser it controls
 npm run test:browser              # the prototype flow: capture, review, edit, district
 npm run test:tour                 # the first-run tour and Builder mode on this product
 npm run test:guide                # the generic guide-kit test, including phone sizes
+npm run test:v120                 # the v1.2.0 fixes: tap a moment on a phone, nudge wording, jump or drop labels, Export CSV
 ```
 
 The demo uses pre-made synthetic photos and voice notes that are already in `demo/media/`. To regenerate them (macOS only, since it uses the built-in `say` voice and `ffmpeg`): `cd demo && node make-media.js`. To remake the animation (needs `ffmpeg` and the Playwright step above): `cd demo && node make-gif.js`.
@@ -184,6 +185,7 @@ This section tracks problems by ID. Every release updates it. Fixed lists what h
 
 | Version | What it contains |
 |---|---|
+| [v1.2.0](CHANGELOG.md#v120) | Fixes found by testing the live demo on a real phone: tapping a moment now shows the Capture panel, the coverage nudge counts a learning area, a drop in level is labelled as a drop, the Check before logging box is a list, and Export CSV no longer opens a data box. The keyword rules now count one phrase as one piece of evidence. The README animation is remade to show the new wording. 79 automated tests. |
 | [v1.1.0](CHANGELOG.md#v110) | Fixes for phone screens and unclear labels, a rebuilt gaps document with each gap mapped to its tour stop, a rewritten README with a demo animation, and an evals folder with tuned keyword rules. 69 automated tests. |
 | [v1.0.0](CHANGELOG.md#v100) | First public release: the product spec, the gaps document, the demo with a guided tour and Builder mode, and 63 automated tests. |
 
@@ -191,6 +193,13 @@ This section tracks problems by ID. Every release updates it. Fixed lists what h
 
 | ID | Issue and how it was found | What changed | Fixed in |
 |---|---|---|---|
+| B01 | **One phrase counted as two pieces of evidence.** Found by eval case H06, then confirmed in the demo's own Maya moment. | When two cues match the same words, only the longer match now counts, so High needs two pieces of evidence that do not overlap. Maya's paint note shows Medium for "Asks questions and makes predictions". Held-out cases passed: 6 of 6 (was 5 of 6). One of the 10 demo moments changed (c2) and the other nine did not. | v1.2.0 |
+| B23 | **Tapping a moment on a phone seemed to do nothing.** Reported from a real phone. The Capture panel sits below the list of moments, so the teacher did not know to scroll down. | The page now scrolls to the Capture panel when a moment is tapped on a phone. Wide screens show both side by side and do not move. A test checks two phone sizes and a wide screen, and fails on v1.1.0. | v1.2.0 |
+| B24 | **The coverage nudge could be read as counting one exact skill.** Reported from a real phone. "Verbally counts numbers: 6 of 10 children have an observation in this three-month window" did not say whether it meant that skill or any observation. | The nudge now names the learning area, for example "Mathematics: 6 of 10 children have an observation in this learning area in the last three months. Nothing yet for Noah, Omar, Zara, Ben." The Stop 3 card says the same. | v1.2.0 |
+| B25 | **"Benchmark not set yet" looked like it contradicted "last: 4".** Reported from a real phone. This was a wording problem, not a data error: "not set yet" meant the new benchmark for this observation, and the 4 was the earlier rating. | The earlier rating now reads "Last rating: 4 (Oct 12, Ms. Rivera)" or "No earlier rating", and an unset benchmark reads "not set yet. Set it in review." | v1.2.0 |
+| B26 | **A fall in level was called a jump.** Reported from a real phone. Setting Maya from 4 to 1 showed "Jump of 3 levels" and "a jump of -3". | A rise reads "Jump of N levels" and a fall reads "Drop of N levels", and the size is never negative. The metric is renamed "Level changes caught" and "Level changes confirmed". | v1.2.0 |
+| B27 | **The Check before logging box was one run-on paragraph.** Reported from a real phone. | One item for each child and skill: their name and the skill on the first line, then the last rating, the new benchmark and the change on the next. | v1.2.0 |
+| B28 | **Export CSV opened a box of raw data under the button.** Reported from a real phone. The box had been added so a browser that blocks downloads could still show the data. | Export CSV sends the file and shows one line saying so. A separate Show the data button opens the raw data, and Hide the data closes it. If the browser blocks the download, the line says so and points to Show the data. | v1.2.0 |
 | B09 | **Tour spotlight in the wrong place on phones.** Reported from the mobile view. A rule meant for wide screens also applied on phones, which pushed the page to 404 px wide on a 375 px screen. | The rule now applies to wide screens only. A new test checks every stop on three phone sizes (375x667, 390x844, 412x915) and fails if the spotlight misses its feature, the card hides it, something sticks out past the screen edge, or Next is off screen. The generic kit test grew from 98 to 120 checks. | v1.1.0 |
 | B10 | **Review controls ran off the edge of phone screens.** Found while measuring B09 at four phone widths. | The row of controls now wraps, and each dropdown fits the screen. | v1.1.0 |
 | B11 | **District table wider than a phone screen.** Found in the same measurement. | The table scrolls sideways inside its own box, and the tour highlights the box. | v1.1.0 |
@@ -208,17 +217,16 @@ This section tracks problems by ID. Every release updates it. Fixed lists what h
 
 ### Open
 
-B01 to B04 were found while building the evals for v1.1.0. B05 to B08 are known limits of the work so far.
+B02 to B04 were found while building the evals for v1.1.0. B05 to B08 are known limits of the work so far.
 
 | ID | Issue and how it was found | Why it matters | Proposed next step | Priority |
 |---|---|---|---|---|
-| B01 | **One phrase counted as two pieces of evidence.** Found by eval case H06, then confirmed in the demo's own Maya moment. "Asked what happens if we add red" and "what happens if" are the same words matched by two rules, so the first skill shows High. | The spec says High needs two or more pieces of evidence. Here one phrase reaches High, so a teacher may trust the suggestion more than the evidence supports. | Count overlapping phrases once. The Maya skill becomes Medium, so the tour, tests and demo animation need a small update. | High |
 | B02 | **Injury and safeguarding wording the rules miss.** A probe with new notes found four with no flag: "scraped his knee", "a really bad tummy ache", "scared to go home tonight" and "his uncle plays rough games that he does not like". | A missed safeguarding note costs far more than a false alarm. | Add words for the first two. The last two need reading for meaning, which a keyword list cannot do. They need a model or a person, and a safe default of flagging a note when unsure. | High |
 | B03 | **Harmless notes still flagged.** "Fell over laughing", "threw up her hands" and "hit her goal of ten stickers" were all flagged as sensitive. | A false alarm sends a harmless note to the incident record and hides real learning evidence. | Narrow the rules, or let the teacher dismiss a flag with one tap and a visible reason. | Medium |
 | B04 | **Negation rule too strong.** "Didn't just count, he counted to ten" and "could not stop jumping" both lost real evidence. | A real observation gets no suggestion. | Handle "didn't just" and "could not stop" as positive. | Low |
 | B05 | **The test sets are small and not blind.** 20 notes, written by the author of the rules. | The scores flatter the rules. | Grow to the spec's 200 labelled notes and a 100-note safety set, labelled by educators who did not write the rules. | Medium |
 | B06 | **No real model has been scored.** | The demo cannot show how a model would behave on these notes. | Write a wrapper that returns the same shape as the rules, and score it with `run-evals.js` next to the rules. | Medium |
 | B07 | **Gaps not fully covered by the demo.** G12 (director approval) and G15 (a sponsor purchasing model) are not in the demo. G06 (two teachers rating differently) and G09 (reminders) are only partly covered. See the [gaps document](docs/CURRENT_STATE_AND_GAPS.md). | Some of the problems the spec describes are not yet shown. | Decide which to build next from the 90-day plan in the spec. | Medium |
-| B08 | **Not tested on a real phone.** The v1.1.0 phone fixes (B09 to B11) were checked on three emulated phone sizes only. | An emulator can miss touch and browser quirks. | Open the live demo on a phone and report what looks wrong. | Medium |
+| B08 | **Only one real phone has been tried.** The author tested the live demo on one iPhone for v1.2.0, which found B23 to B28. Other phones, Android and tablets have not been checked. | An emulator and one phone can miss quirks on other devices. | Open the live demo on a different phone or a tablet and report what looks wrong. | Medium |
 
 License: MIT for the code and documents. The mascot images in `demo/assets/` are a personal avatar of the author, are not covered by the MIT licence, and may not be reused.

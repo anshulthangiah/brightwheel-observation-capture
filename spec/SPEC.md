@@ -43,8 +43,8 @@ Education is being built as a second core business: curriculum, assessments and 
 2. A suggested skill and a **separate benchmark for each child**.
 3. A "why" line for every suggestion: the words said and what the photo shows.
 4. The earlier benchmark, who gave it and when, beside each new one.
-5. A check step when a new benchmark jumps 2 or more levels from the last one.
-6. A coverage nudge at capture: how many children have an observation for this skill in the window, and who has none.
+5. A check step when a new benchmark is 2 or more levels above or below the last rating (a jump or a drop).
+6. A coverage nudge at capture: how many children have an observation in the learning area of the matched skill in the last three months, and who has none.
 7. Safety routing: sensitive notes are not mapped, are Staff-only, and go to an incident record.
 8. End-of-day review with undo and bulk approval of clean matches only.
 9. A district view of evidence quality across sites, with CSV export.
@@ -92,7 +92,7 @@ The mapper takes the framework as an input, so a state framework such as DRDP ca
 | Review time | Minutes per day in the review queue | Under 3 |
 | Approval without edit | Approved drafts with no change, High confidence | At least 70% |
 | Wrong-skill rate | Teacher-labelled errors in a 200-note sample, High confidence | Under 10% |
-| Level jumps caught | Flagged jumps, and the % teachers change | To be measured |
+| Level changes caught | Flagged jumps and drops, and the % teachers change | To be measured |
 | Children with a recent observation | % of children with at least one observation in each learning area in the window | Up from baseline |
 | Sponsor evidence | Number of sponsors able to export combined evidence | To be measured |
 
@@ -236,7 +236,7 @@ sequenceDiagram
         T->>R: Tick the procedure box, then Mark as handled
     end
     opt Check the level
-        R-->>T: Jump of 2 or more levels, with the last rating, who gave it and when
+        R-->>T: Jump or drop of 2 or more levels, with the last rating, who gave it and when
         alt The level is right
             T->>R: Tap Yes, that level is right
         else The level is wrong
@@ -310,7 +310,7 @@ sequenceDiagram
     P->>D: Look for the site with low coverage
     D-->>P: The flag names the site and the reason
     P->>D: Tap Export CSV
-    D-->>P: A spreadsheet file and an on-screen preview
+    D-->>P: A spreadsheet file and a one-line confirmation. The raw data opens only from a separate Show the data button
     Note over P: The sponsor can combine it with its own data
 ```
 
@@ -323,7 +323,7 @@ A scripted simulation of the experience. No model runs; the speech, photo-readin
 3. **Choose who sees it.** An explicit choice between "Families and staff" and "Staff only", carried into review. Sensitive notes are locked to Staff only.
 4. **Explain.** Each suggested skill shows why: the words said and, where relevant, what the photo shows.
 5. **Check.** Each child gets a benchmark with the earlier one beside it. A big jump or a different earlier rater raises a check.
-6. **Nudge.** The matched skill shows how many children have an observation in the window and who has none.
+6. **Nudge.** The learning area of the matched skill shows how many children have an observation in it in the last three months, and who has none.
 7. **Route.** Sensitive notes are not mapped, are Staff only and go to incident.
 8. **Review.** End-of-day queue with undo, bulk approval of clean matches, and a completion screen that lists who is missing.
 9. **District.** Made-up site figures for evidence quality, with CSV export.
@@ -351,7 +351,7 @@ The prototype explains itself so a reader does not need the README. A first-run 
 | T13 | The guide also appears in the Builder mode legend, and nowhere else. He never appears inside the Teacher or District screens, the header, or the stop card |
 | T14 | The mode is named Builder mode in every visible string |
 | T15 | Switching Builder mode on shows all six numbers at once, on every screen. A number sits on its live feature when that is on screen, and otherwise on the panel or tab that leads to it |
-| T16 | A measure only uses terms the screen shows. A big jump is labelled "Jump of N levels. Needs a check." at capture and in review |
+| T16 | A measure only uses terms the screen shows. A big rise is labelled "Jump of N levels. Needs a check." and a big fall "Drop of N levels. Needs a check.", at capture and in review |
 | T17 | Rates in measures are written as percentages (%), and the first 90 days are shown as four short rows |
 | T18 | The tour and Builder mode are one reusable kit. All wording lives in one content file, and the app talks to the kit only through a small host adapter, so the same code can run in any prototype |
 
