@@ -37,13 +37,19 @@
     return NEGATION.test(clause) && !NEG_POSITIVE.test(clause);
   }
 
+  // One phrase is one piece of evidence. When two cues match the same words ("asked what happens if we add red" and
+  // "what happens if"), only the longer match counts, so High needs two pieces of evidence that do not overlap.
   function scoreGoal(goal, note) {
-    const hits = [];
+    const found = [];
     for (const cue of goal.cues) {
       const m = note.match(cue.re);
-      if (m && !negatedAt(note, m.index)) hits.push({ cue: cue.id, phrase: m[0].trim() });
+      if (m && !negatedAt(note, m.index)) found.push({ cue: cue.id, phrase: m[0].trim(), start: m.index, end: m.index + m[0].length, order: found.length });
     }
-    return hits;
+    const keep = [];
+    [...found].sort((a, b) => (b.end - b.start) - (a.end - a.start) || a.order - b.order).forEach((h) => {
+      if (!keep.some((k) => h.start < k.end && k.start < h.end)) keep.push(h);
+    });
+    return keep.sort((a, b) => a.order - b.order).map(({ cue, phrase }) => ({ cue, phrase }));
   }
 
   function mapObservation(note, roster, framework, photoTags) {

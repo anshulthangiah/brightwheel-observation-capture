@@ -2,6 +2,31 @@
 
 All notable changes to this project, newest first. Each version links to the problems fixed and still open in the README's [Known issues and backlog](README.md#known-issues-and-backlog). The GitHub Release for each version uses the same text.
 
+## v1.2.0
+
+Fixes from testing the live demo on a real phone, and a fix to the keyword rules that the evals had found.
+
+### Fixed
+- Tapping a moment on a phone now scrolls to the Capture panel, so the teacher can see that something happened. Wide screens do not move (B23).
+- The coverage nudge now names a learning area, for example "Mathematics: 6 of 10 children have an observation in this learning area in the last three months." It no longer reads as if it counted one exact skill (B24).
+- "Benchmark not set yet" no longer looks like it contradicts the earlier rating. The earlier rating reads "Last rating: 4 (Oct 12, Ms. Rivera)" or "No earlier rating" (B25).
+- A fall in level is now called a drop. Moving Maya from 4 to 1 shows "Drop of 3 levels", not "Jump of 3 levels" or "a jump of -3". The two metrics are renamed "Level changes caught" and "Level changes confirmed" (B26).
+- The Check before logging box is a list with one item for each child and skill, and each item has the last rating, the new benchmark and the change on its own line (B27).
+- Export CSV no longer opens a box of raw data. It sends the file and says so in one line. A separate Show the data button opens the data (B28).
+- The keyword rules count one phrase as one piece of evidence, so Maya's paint note shows Medium, not High, for "Asks questions and makes predictions". Held-out cases passed: 6 of 6 (was 5 of 6). One of the 10 scripted demo moments changed and the other nine did not (B01).
+
+### Changed
+- The Stop 2 and Stop 3 cards, the spec and the gaps document use the new wording for jumps, drops and the nudge.
+- The animation at the top of the README is remade from the live demo, so Stops 2 and 3 show the new wording.
+- The evals README says that H06 was used to drive a change in v1.2.0, so it is no longer a held-out case in the strict sense. The v1.1.0 rules scored 5 of 5 on the other five held-out cases.
+
+### Still open
+- Some injury and safeguarding wording is still missed, such as "scraped his knee" and "scared to go home tonight" (B02).
+- Six more items are listed in the README (B03 to B08).
+
+### Tests
+79 unit tests (was 69). A new browser suite of 25 checks covers the phone, nudge, drop, list and export fixes, and fails on the v1.1.0 code. The other three browser suites still have 76, 131 and 120 checks.
+
 ## v1.1.0
 
 Phone fixes, clearer labels, a rebuilt gaps document, tested keyword rules and a rewritten README.

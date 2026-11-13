@@ -93,7 +93,8 @@
       <h2>District: evidence quality across sites</h2>
       <p class="hint">Concept for a county, district or state sponsor. It shows how much evidence exists and how consistently it is recorded, not child outcomes, because results only mean something once the evidence is consistent. All numbers are made up.</p>
       <div id="district"></div>
-      <div class="row"><button id="export-csv" class="primary">Export CSV</button><span class="hint">A spreadsheet export, so a state can combine it with its own data.</span></div>
+      <div class="row"><button id="export-csv" class="primary">Export CSV</button><button id="show-csv" class="ghost" type="button" aria-expanded="false" aria-controls="csv-preview">Show the data</button><span class="hint">A spreadsheet export, so a state can combine it with its own data.</span></div>
+      <p id="csv-status" class="hint" role="status" aria-live="polite"></p>
       <pre id="csv-preview" class="csv" hidden></pre>
     </div>
   </section>

@@ -101,9 +101,9 @@ test("measures use % for rates, not the word 'share'", () => {
   assert.match(P.STEPS.find((s) => s.id === "review").measure, /% of drafts approved without changes/);
 });
 
-test("a measure only uses terms the screen shows: 'jump' yes, 'flag' no", () => {
+test("a measure only uses terms the screen shows: 'jump' and 'drop' yes, 'flag' no", () => {
   const b = P.STEPS.find((s) => s.id === "benchmark");
-  assert.match(b.measure, /jumps? \(2 or more levels\)/);
+  assert.match(b.measure, /jumps and drops \(2 or more levels\)/);
   assert.match(b.measure, /after the check/);
   P.STEPS.forEach((s) => assert.ok(!/\bflag/i.test(s.measure), s.id + " measure says 'flag'"));
 });

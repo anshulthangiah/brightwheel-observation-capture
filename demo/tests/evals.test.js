@@ -33,14 +33,18 @@ test("no harmless look-alike note is flagged as sensitive", () => {
     assert.notStrictEqual(after.matcher.mapObservation(c.note, DATA.roster, after.framework, []).status, "needs_attention", c.id));
 });
 
-test("the one held-out case still failing is H06 (one phrase counted as two pieces of evidence). If you fix it, update evals/README.md", () => {
-  assert.deepStrictEqual(failing(after, "held-out"), ["H06"]);
+test("v1.2.0: every held-out case now passes. H06 (one phrase counted as two pieces of evidence) was fixed in v1.2.0 (B01)", () => {
+  assert.deepStrictEqual(failing(after, "held-out"), []);
+  assert.deepStrictEqual(failing(before, "held-out").length, 5);   // the frozen v1 rules still fail 5 of 6
 });
 
-test("tuning did not change any of the 10 scripted demo moments", () => {
-  DATA.captures.forEach((c) => {
+test("v1.2.0 changed exactly one of the 10 scripted demo moments: c2 (Maya), where 'Asks questions and makes predictions' goes from High to Medium", () => {
+  const changed = DATA.captures.filter((c) => {
     const a = JSON.stringify(after.matcher.mapObservation(c.note, DATA.roster, after.framework, c.vision.tags));
     const b = JSON.stringify(before.matcher.mapObservation(c.note, DATA.roster, before.framework, c.vision.tags));
-    assert.strictEqual(a, b, c.id);
-  });
+    return a !== b;
+  }).map((c) => c.id);
+  assert.deepStrictEqual(changed, ["c2"]);
+  const maya = after.matcher.mapObservation(DATA.captures.find((c) => c.id === "c2").note, DATA.roster, after.framework, []).suggestions.find((s) => s.goalId === "SCI1a");
+  assert.strictEqual(maya.confidence, "Medium");
 });

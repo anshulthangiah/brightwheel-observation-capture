@@ -56,6 +56,12 @@
     state.records.forEach((r) => { if (r.goalIds.includes(goalId)) r.childIds.forEach((c) => ids.push(c)); });
     return ids;
   }
+  // children observed today for ANY skill in a learning area
+  function sessionObservedArea(goalIds) {
+    const ids = [];
+    state.records.forEach((r) => { if (r.goalIds.some((g) => goalIds.includes(g))) r.childIds.forEach((c) => ids.push(c)); });
+    return ids;
+  }
 
   // ---------- edit helpers: the check shown before an edit is saved
   const DEMO_RULES = "In this demo, editing re-matches skills with simple keyword rules, not an AI model. Unusual wording may return no suggestion.";
@@ -94,7 +100,14 @@
       return `<li data-id="${c.id}" class="${active ? "sel" : ""} ${done ? "done" : ""}">
         <img src="${c.photo}" alt=""><div><div class="t">${c.time}${done ? " &#10003; saved" : ""}</div><div class="n">${esc(c.vision.caption)}</div></div></li>`;
     }).join("");
-    document.querySelectorAll("#capture-list li").forEach((li) => li.addEventListener("click", () => select(li.dataset.id)));
+    document.querySelectorAll("#capture-list li").forEach((li) => li.addEventListener("click", () => { select(li.dataset.id); revealCapture(); }));
+  }
+  // On a phone the Capture panel sits below the list of moments, so a tap on a moment would change nothing the teacher can see.
+  // Bring the panel into view. Wide screens show both side by side and do not move.
+  function revealCapture() {
+    if (!window.matchMedia("(max-width:760px)").matches) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    $("#capture-detail").scrollIntoView({ block: "start", behavior: reduce ? "auto" : "smooth" });
   }
   function renderChips() {
     $("#chips").innerHTML = roster.map((c) =>
@@ -106,13 +119,15 @@
     state.tapCount++; $("#conflict").hidden = true; renderChips(); renderStage();
   });
 
-  // The coverage nudge shown at capture time, for the skill the assistant matched.
+  // The coverage nudge shown at capture time. It counts the learning area of the matched skill (for example Mathematics),
+  // not the one skill: a child counts if they have any observation in that area in the last three months.
   function nudgeHtml(cap) {
     const s = cap.result && cap.result.suggestions[0]; if (!s) return "";
-    const g = Trust.coverageGap(DATA.history, roster, s.goalId, sessionObserved(s.goalId));
+    const areaIds = FRAMEWORK.goals.filter((x) => x.domain === s.domain).map((x) => x.id);
+    const g = Trust.areaCoverage(DATA.history, roster, areaIds, sessionObservedArea(areaIds));
     const names = g.missing.map(nameOf);
-    if (!names.length) return `<div class="nudge ok"><b>${esc(s.sub)}:</b> every child has an observation in this window.</div>`;
-    return `<div class="nudge"><b>${esc(s.sub)}:</b> ${g.observed} of ${g.total} children have an observation in this three-month window. Nothing yet for ${names.map(esc).join(", ")}.</div>`;
+    if (!names.length) return `<div class="nudge ok"><b>${esc(s.domain)}:</b> every child has an observation in this learning area in the last three months.</div>`;
+    return `<div class="nudge"><b>${esc(s.domain)}:</b> ${g.observed} of ${g.total} children have an observation in this learning area in the last three months. Nothing yet for ${names.map(esc).join(", ")}.</div>`;
   }
 
   function draftPreviewObj() {
@@ -336,13 +351,14 @@
       const jump = (d.flags || []).find((f) => f.childId === c && f.goalId === s.goalId); const flagged = !!jump;
       const sel = editable
         ? `<select data-act="level" data-key="${d.key}" data-goal="${s.goalId}" data-child="${c}" aria-label="Benchmark for ${esc(nameOf(c))}"><option value="">Set benchmark</option>${FRAMEWORK.benchmarks.map((b) => `<option value="${b}" ${cur === b ? "selected" : ""}>${b}</option>`).join("")}</select>`
-        : (cur === undefined ? `<b class="unset">not set yet, you set it in review</b>` : `<b>${cur}</b>`);
-      return `<div class="lvrow ${flagged ? "flag" : ""}"><span>${esc(nameOf(c))}</span><span class="lvnow">Benchmark ${sel}</span><span class="lvprev">${prior ? "last: " + prior.level + " (" + prior.date + ", " + esc(prior.by) + ")" : "no earlier observation"}</span>${jump ? `<span class="jumptag">Jump of ${Math.abs(jump.diff)} levels. Needs a check.</span>` : ""}</div>`;
+        : (cur === undefined ? `<b class="unset">not set yet. Set it in review.</b>` : `<b>${cur}</b>`);
+      return `<div class="lvrow ${flagged ? "flag" : ""}"><span>${esc(nameOf(c))}</span><span class="lvnow">Benchmark ${sel}</span><span class="lvprev">${prior ? "Last rating: " + prior.level + " (" + prior.date + ", " + esc(prior.by) + ")" : "No earlier rating"}</span>${jump ? `<span class="jumptag">${Trust.changeLabel(jump.diff)}. Needs a check.</span>` : ""}</div>`;
     }).join("") + `</div>`;
   }
   function flagHtml(d) {
     if (!(d.flags || []).length) return "";
-    return `<div class="flagbox"><b>Check before logging.</b> ` + d.flags.map((f) => `${esc(nameOf(f.childId))}: ${f.from} to ${f.to} on ${esc(goalOf(f.goalId).sub)} (last rated ${esc(f.by)}, ${esc(f.date)}). That is a jump of ${f.diff}.`).join(" ") + `</div>`;
+    // one item per child and skill, each on its own lines: who and what on the first, the last rating, the new one and the size of the change on the second
+    return `<div class="flagbox"><b>Check before logging</b><ul class="flaglist">` + d.flags.map((f) => `<li><b>${esc(nameOf(f.childId))}</b> on ${esc(goalOf(f.goalId).sub)}<br><span class="flagline">Last rating ${f.from} (${esc(f.by)}, ${esc(f.date)}). New benchmark ${f.to}. ${Trust.changeLabel(f.diff)}.</span></li>`).join("") + `</ul></div>`;
   }
 
   function editorCard(d) {
@@ -546,10 +562,19 @@
         <td><div class="minibar"><div style="width:${r.children_observed_pct}%"></div></div>${r.children_observed_pct}%</td><td>${r.obs_per_child}</td><td>${r.obs_with_photo_pct}%</td><td>${r.avg_skills_assessed_of_73}</td>
         <td>${r.flags === "None" ? '<span class="chip High">None</span>' : esc(r.flags)}</td></tr>`).join("") + `</tbody></table></div>`;
   }
+  // Export CSV only hands the file to the browser and says so. The raw data is behind a separate button.
+  const csvText = () => Trust.toCsv(Trust.districtRows(DATA.sites));
   $("#export-csv").addEventListener("click", () => {
-    const csv = Trust.toCsv(Trust.districtRows(DATA.sites));
-    const pre = $("#csv-preview"); pre.hidden = false; pre.textContent = csv;
-    try { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" })); a.download = "district-evidence-quality.csv"; a.click(); } catch (e) { /* preview only */ }
+    const status = $("#csv-status"), name = "district-evidence-quality.csv";
+    try {
+      const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([csvText()], { type: "text/csv" })); a.download = name; a.click();
+      status.textContent = "Sent to your browser as " + name + " (" + DATA.sites.length + " sites). Check your downloads.";
+    } catch (e) { status.textContent = "Your browser blocked the download. Use Show the data instead."; }
+  });
+  $("#show-csv").addEventListener("click", () => {
+    const pre = $("#csv-preview"), btn = $("#show-csv"), open = pre.hidden;
+    pre.hidden = !open; pre.textContent = open ? csvText() : "";
+    btn.textContent = open ? "Hide the data" : "Show the data"; btn.setAttribute("aria-expanded", String(open));
   });
 
   // ---------- metrics
@@ -562,8 +587,8 @@
       ["Approved", state.records.length, "Attached to a child record"],
       ["Approved without edit", decided ? Math.round(100 * s.approvedNoEdit / decided) + "%" : "n/a", "Spec target: 70%+ for High"],
       ["Deleted", s.rejected, "Drafts you chose not to keep"],
-      ["Level jumps caught", state.drafts.filter((d) => (d.flags || []).length).length, "Flagged before logging"],
-      ["Level jumps confirmed", s.flagsConfirmed, "Teacher checked and kept"],
+      ["Level changes caught", state.drafts.filter((d) => (d.flags || []).length).length, "Flagged before logging"],
+      ["Level changes confirmed", s.flagsConfirmed, "Teacher checked and kept"],
       ["Avg. seconds to capture", fmt(avg(s.captureSecs), "s"), "Includes the simulated waiting"],
       ["Avg. taps per approval", fmt(avg(s.taps)), "Photo, record, save + approve (bulk shares one tap)"],
       ["Needs attention", state.drafts.filter((d) => d.result.status === "needs_attention").length, "Never mapped, Staff-only"]
